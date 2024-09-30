@@ -1,0 +1,77 @@
+[0.010s] Invoking command in '/home/riplab/GIT/iir-ws/build/iir_nav2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/riplab/GIT/iir-ws/src/iir_nav2 -DCMAKE_INSTALL_PREFIX=/home/riplab/GIT/iir-ws/install/iir_nav2
+[0.053s] -- The C compiler identification is GNU 13.2.0
+[0.098s] -- The CXX compiler identification is GNU 13.2.0
+[0.110s] -- Detecting C compiler ABI info
+[0.178s] -- Detecting C compiler ABI info - done
+[0.194s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.194s] -- Detecting C compile features
+[0.195s] -- Detecting C compile features - done
+[0.204s] -- Detecting CXX compiler ABI info
+[0.280s] -- Detecting CXX compiler ABI info - done
+[0.288s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.289s] -- Detecting CXX compile features
+[0.289s] -- Detecting CXX compile features - done
+[0.292s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.412s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.507s] -- Found nav2_common: 1.3.1 (/opt/ros/jazzy/share/nav2_common/cmake)
+[0.509s] -- Found navigation2: 1.3.1 (/opt/ros/jazzy/share/navigation2/cmake)
+[0.509s] -- Setting build type to Release as none was specified.
+[0.512s] -- Found ament_lint_auto: 0.17.1 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[0.627s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.630s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.630s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.630s] -- Added test 'lint_cmake' to check CMake code style
+[0.631s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.632s] -- Added test 'xmllint' to check XML markup files
+[0.634s] -- Configuring done (0.6s)
+[0.636s] -- Generating done (0.0s)
+[0.637s] -- Build files have been written to: /home/riplab/GIT/iir-ws/build/iir_nav2
+[0.641s] Invoked command in '/home/riplab/GIT/iir-ws/build/iir_nav2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/riplab/GIT/iir-ws/src/iir_nav2 -DCMAKE_INSTALL_PREFIX=/home/riplab/GIT/iir-ws/install/iir_nav2
+[0.641s] Invoking command in '/home/riplab/GIT/iir-ws/build/iir_nav2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/riplab/GIT/iir-ws/build/iir_nav2 -- -j16 -l16
+[0.671s] Invoked command in '/home/riplab/GIT/iir-ws/build/iir_nav2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/riplab/GIT/iir-ws/build/iir_nav2 -- -j16 -l16
+[0.689s] Invoking command in '/home/riplab/GIT/iir-ws/build/iir_nav2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/riplab/GIT/iir-ws/build/iir_nav2
+[0.696s] -- Install configuration: "Release"
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/tb3_loopback_simulation.launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/cloned_multi_tb3_simulation_launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/slam_launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/rviz_launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/tb4_loopback_simulation.launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/bringup_launch.py
+[0.696s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/tb3_simulation_launch.py
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/unique_multi_tb3_simulation_launch.py
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/tb4_simulation_launch.py
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/navigation_launch.py
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/launch/localization_launch.py
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/depot.pgm
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/tb3_sandbox.pgm
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/depot.yaml
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/tb3_sandbox.yaml
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/warehouse.yaml
+[0.697s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/maps/warehouse.pgm
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/rviz
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/rviz/nav2_default_view.rviz
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/rviz/nav2_namespaced_view.rviz
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params/nav2_multirobot_params_1.yaml
+[0.698s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params/nav2_multirobot_params_all.yaml
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params/nav2_multirobot_params_2.yaml
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params/oldnav2_params.yaml
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/params/nav2_params.yaml
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/ament_index/resource_index/package_run_dependencies/iir_nav2
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/ament_index/resource_index/parent_prefix_path/iir_nav2
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/environment/ament_prefix_path.sh
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/environment/ament_prefix_path.dsv
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/environment/path.sh
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/environment/path.dsv
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/local_setup.bash
+[0.699s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/local_setup.sh
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/local_setup.zsh
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/local_setup.dsv
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/package.dsv
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/ament_index/resource_index/packages/iir_nav2
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/cmake/iir_nav2Config.cmake
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/cmake/iir_nav2Config-version.cmake
+[0.700s] -- Installing: /home/riplab/GIT/iir-ws/install/iir_nav2/share/iir_nav2/package.xml
+[0.701s] Invoked command in '/home/riplab/GIT/iir-ws/build/iir_nav2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/riplab/GIT/iir-ws/build/iir_nav2
