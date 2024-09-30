@@ -1,0 +1,8 @@
+{
+    "xml.downloadExternalResources.enabled": true,
+    "cmake.sourceDirectory": "/home/riplab/IIR_ws/src/IIR_base",
+    "files.associations": {
+        "stdexcept": "cpp",
+        "algorithm": "cpp"
+    }
+}

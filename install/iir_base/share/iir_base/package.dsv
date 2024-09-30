@@ -1,0 +1,8 @@
+source;share/iir_base/hook/cmake_prefix_path.dsv
+source;share/iir_base/hook/cmake_prefix_path.sh
+source;share/iir_base/hook/pythonpath.dsv
+source;share/iir_base/hook/pythonpath.sh
+source;share/iir_base/local_setup.bash
+source;share/iir_base/local_setup.dsv
+source;share/iir_base/local_setup.sh
+source;share/iir_base/local_setup.zsh
