@@ -39,11 +39,19 @@ def generate_launch_description():
             description="Start robot with mock hardware mirroring command to its states.",
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_sim_time",
+            default_value="false",
+            description="use simulation clock, set true if simulating w/gz"
+        )
+    )
 
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
-
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    # joy = LaunchConfiguration
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -91,7 +99,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
 
-        parameters=[{'robot_description': robot_description}, robot_controllers,{'use_sim_time': True}],
+        parameters=[{'robot_description': robot_description}, robot_controllers,{'use_sim_time': use_sim_time}],
         condition=(IfCondition(use_mock_hardware))
             
 
@@ -100,7 +108,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description,{'use_sim_time': True}],
+        parameters=[robot_description,{'use_sim_time': use_sim_time}],
         remappings=[
             ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
         ],
@@ -111,13 +119,13 @@ def generate_launch_description():
         name="rviz2",
         output="log",
         arguments=["-d", nav_rviz_config_file],
-        parameters=[{'use_sim_time': True}],
+        parameters=[{'use_sim_time': use_sim_time}],
         condition=IfCondition(gui),
     )
     joint_state_publisher = Node(
     package="joint_state_publisher",
     executable="joint_state_publisher",
-    parameters=[{'use_sim_time': True}]
+    parameters=[{'use_sim_time': use_sim_time}]
     
 )
     joint_state_broadcaster_spawner = Node(
@@ -138,7 +146,7 @@ def generate_launch_description():
         package="tf2_ros",
         executable="static_transform_publisher",
         name="link_broad",
-        arguments=['0', '0', '0', '0', '0', '0', '0', 'map', 'odom'],
+        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
         output='screen'
 
     )
@@ -146,17 +154,15 @@ def generate_launch_description():
         package="iir_base",
         executable="tf2_publish.py"
     )
-    # Delay rviz start after `joint_state_broadcaster`
-    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[rviz_node],
-        )
+    micro_ros_node = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        arguments=['serial', '--dev', '/dev/ttyACM0']
     )
     bridge = Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
-            parameters=[{'config_file': bridge_params},{'use_sim_time': True}],
+            parameters=[{'config_file': bridge_params},{'use_sim_time': use_sim_time}],
             output='screen'
         )
     robot_localization_node = Node(
@@ -164,7 +170,7 @@ def generate_launch_description():
        executable='ekf_node',
        name='ekf_filter_node',
        output='screen',
-       parameters=[ekf_params, {'use_sim_time' : True}]
+       parameters=[ekf_params, {'use_sim_time' : use_sim_time}]
        )
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
@@ -176,10 +182,11 @@ def generate_launch_description():
     )
 
     nodes = [
-        # static_transform_publisher,
+        static_transform_publisher,
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
+        micro_ros_node,
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
