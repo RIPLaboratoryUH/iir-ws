@@ -46,11 +46,27 @@ def generate_launch_description():
             description="use simulation clock, set true if simulating w/gz"
         )
     )
-
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_keyboard_twist",
+            default_value="false",
+            description="publish cmd_vel from keyboard"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_joy_twist",
+            default_value="false",
+            description="publish cmd vel from joystick"
+        )
+    )
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_sim_time = LaunchConfiguration("use_sim_time")
+    use_keyboard_twist = LaunchConfiguration("use_keyboard_twist")
+    use_joy_twist = LaunchConfiguration("use_joy_twist")
+
     # joy = LaunchConfiguration
     # Get URDF via xacro
     robot_description_content = Command(
@@ -140,6 +156,24 @@ def generate_launch_description():
         arguments=["diff_drive_controller", "--param-file", robot_controllers],
     )
 
+    joystick_node = Node(
+        #ros2 run teleop_twist_joy teleop_node --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
+
+        package='teleop_twist_joy',
+        executable='teleop_node',
+        arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
+        condition=IfCondition(use_joy_twist)
+    )
+    keyboard_node = Node(
+        #ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
+
+    package='teleop_twist_keyboard',
+    executable='teleop_twist_keyboard',
+    arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
+    condition=IfCondition(use_keyboard_twist),
+    output='screen'
+)
+
     #static transform publisher - this should be somewhre else but im just testing
     #apparently, this doesnt work here, but if we launch it in a terminal elsewhere it actually does publish the map->odom transform +map frame
     static_transform_publisher = Node(
@@ -157,7 +191,8 @@ def generate_launch_description():
     micro_ros_node = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
-        arguments=['serial', '--dev', '/dev/ttyACM0']
+        arguments=['serial', '--dev', '/dev/ttyACM0'],
+        output='screen'
     )
     bridge = Node(
             package='ros_gz_bridge',
@@ -187,6 +222,9 @@ def generate_launch_description():
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
         micro_ros_node,
+        # twist_stamper,
+        # joystick_node,
+        # keyboard_node,
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
