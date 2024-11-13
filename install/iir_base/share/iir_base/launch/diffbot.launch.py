@@ -1,5 +1,3 @@
-# Copyright 2020 ros2_control Development Team
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -157,26 +155,23 @@ def generate_launch_description():
     )
 
     joystick_node = Node(
+        #ros2 run teleop_twist_joy teleop_node --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
+
         package='teleop_twist_joy',
         executable='teleop_node',
         arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
         condition=IfCondition(use_joy_twist)
     )
     keyboard_node = Node(
+        #ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
+
     package='teleop_twist_keyboard',
     executable='teleop_twist_keyboard',
     arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
     condition=IfCondition(use_keyboard_twist),
     output='screen'
 )
-    twist_stamper = Node(
-        package='twist_stamper',
-        executable='twist_stamper',
-        remappings=[('/cmd_vel_in','/cmd_vel_user'),
-                    ('/cmd_vel_out','/diff_drive_controller/cmd_vel')],
-                    output='screen',
-        condition=IfCondition(use_joy_twist) or IfCondition(use_keyboard_twist)
-      )
+
     #static transform publisher - this should be somewhre else but im just testing
     #apparently, this doesnt work here, but if we launch it in a terminal elsewhere it actually does publish the map->odom transform +map frame
     static_transform_publisher = Node(
@@ -225,9 +220,9 @@ def generate_launch_description():
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
         micro_ros_node,
-        twist_stamper,
-        joystick_node,
-        keyboard_node,
+        # twist_stamper,
+        # joystick_node,
+        # keyboard_node,
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,

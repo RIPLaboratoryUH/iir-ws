@@ -145,7 +145,7 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad"],
+        arguments=["joint_broad_manager"],
     )
 
     robot_controller_spawner = Node(
@@ -219,7 +219,7 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
-        micro_ros_node,
+        # micro_ros_node,
         # twist_stamper,
         # joystick_node,
         # keyboard_node,
