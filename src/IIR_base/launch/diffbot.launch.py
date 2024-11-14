@@ -145,7 +145,7 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad_manager"],
+        arguments=["joint_broad"],
     )
 
     robot_controller_spawner = Node(
