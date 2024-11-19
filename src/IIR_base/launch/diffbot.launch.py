@@ -182,6 +182,11 @@ def generate_launch_description():
         output='screen'
 
     )
+    odom_to_tf = Node(
+        package="odom_to_tf_ros2",
+        executable="odom_to_tf",
+        parameters=[{'odom_topic': '/diff_drive_controller/odom'}]
+    )
     my_tf_publisher = Node(
         package="iir_base",
         executable="tf2_publish.py"
@@ -219,6 +224,7 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
+        odom_to_tf,
         # micro_ros_node,
         # twist_stamper,
         # joystick_node,

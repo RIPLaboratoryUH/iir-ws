@@ -219,7 +219,7 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
-        micro_ros_node,
+        # micro_ros_node,
         # twist_stamper,
         # joystick_node,
         # keyboard_node,
