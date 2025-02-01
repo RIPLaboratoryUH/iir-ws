@@ -172,7 +172,7 @@ def generate_launch_description():
     output='screen'
 )
 
-    #static transform publisher - this should be somewhre else but im just testing
+
     static_transform_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -231,7 +231,7 @@ def generate_launch_description():
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
-        rviz_node,
+        #rviz_node,
         joint_state_publisher,
         # my_tf_publisher,
         
