@@ -132,7 +132,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="log",
-        arguments=["-d", nav_rviz_config_file],
+        arguments=["-d", rviz_config_file],
         parameters=[{'use_sim_time': use_sim_time}],
         condition=IfCondition(gui),
     )
@@ -173,7 +173,6 @@ def generate_launch_description():
 )
 
     #static transform publisher - this should be somewhre else but im just testing
-    #apparently, this doesnt work here, but if we launch it in a terminal elsewhere it actually does publish the map->odom transform +map frame
     static_transform_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -181,6 +180,11 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
         output='screen'
 
+    )
+    odom_to_tf = Node(
+        package="odom_to_tf_ros2",
+        executable="odom_to_tf",
+        arguments=['--ros-args', '-p' ,'odom_topic:=diff_drive_controller/odom']
     )
     my_tf_publisher = Node(
         package="iir_base",
@@ -219,7 +223,8 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
-        micro_ros_node,
+        odom_to_tf,
+        # micro_ros_node,
         # twist_stamper,
         # joystick_node,
         # keyboard_node,
