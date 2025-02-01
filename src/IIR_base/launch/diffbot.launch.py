@@ -113,7 +113,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
 
-        parameters=[{'robot_description': robot_description}, robot_controllers,],
+        parameters=[{'robot_description': robot_description}, robot_controllers,{'use_sim_time': use_sim_time}],
         condition=(IfCondition(use_mock_hardware))
             
 
@@ -139,7 +139,7 @@ def generate_launch_description():
     joint_state_publisher = Node(
     package="joint_state_publisher",
     executable="joint_state_publisher",
-    parameters=[]
+    parameters=[{'use_sim_time': use_sim_time}]
     
 )
     joint_state_broadcaster_spawner = Node(
