@@ -113,7 +113,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
 
-        parameters=[{'robot_description': robot_description}, robot_controllers,{'use_sim_time': use_sim_time}],
+        parameters=[{'robot_description': robot_description}, robot_controllers,],
         condition=(IfCondition(use_mock_hardware))
             
 
@@ -139,7 +139,7 @@ def generate_launch_description():
     joint_state_publisher = Node(
     package="joint_state_publisher",
     executable="joint_state_publisher",
-    parameters=[{'use_sim_time': use_sim_time}]
+    parameters=[]
     
 )
     joint_state_broadcaster_spawner = Node(
@@ -173,7 +173,7 @@ def generate_launch_description():
 )
 
     #static transform publisher - this should be somewhre else but im just testing
-    #apparently, this doesnt work here, but if we launch it in a terminal elsewhere it actually does publish the map->odom transform +map frame
+    
     static_transform_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -226,7 +226,7 @@ def generate_launch_description():
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
-        rviz_node,
+        #rviz_node,
         joint_state_publisher,
         # my_tf_publisher,
         
