@@ -153,7 +153,7 @@ global_costmap:
       # When using GPS navigation you will potentially traverse huge environments which are not practical to
       # fit on a big static costmap. Thus it is recommended to use a rolling global costmap large enough to 
       # contain each pair of successive waypoints. See: https://github.com/ros-planning/navigation2/issues/2174
-      rolling_window: True
+      rolling_window: True # not sure what happens when this is false
       width: 50
       height: 50
       track_unknown_space: true
