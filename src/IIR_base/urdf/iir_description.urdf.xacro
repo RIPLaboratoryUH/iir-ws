@@ -19,6 +19,7 @@
 
   <!-- Base Link -->
   <link name="base_link">
+  <origin xyz="-0.1 0 0"/>
     <collision>
       <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
       <geometry>
@@ -27,7 +28,7 @@
     </collision>
 
     <visual>
-      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <origin xyz="-.15 0 ${base_height/2}" rpy="0 0 0"/>
       <geometry>
         <box size="${base_width} ${base_length} ${base_height}"/>
       </geometry>
