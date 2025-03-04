@@ -1,6 +1,5 @@
 # GPS WPF CHANGES: 
-# - amcl params where removed. They are not needed because global localization is provided
-#   by an ekf node on robot_localization fusing gps data with local odometry sources
+# - amcl params where removed. 
 # - static layer is removed from both costmaps, in this tutorial we assume there is no map
 #   of the environment
 # - global costmap is set to be rolling to allow the robot to traverse big environment by
