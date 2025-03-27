@@ -132,7 +132,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="log",
-        arguments=["-d", nav_rviz_config_file],
+        arguments=["-d", rviz_config_file],
         parameters=[{'use_sim_time': use_sim_time}],
         condition=IfCondition(gui),
     )
@@ -142,16 +142,20 @@ def generate_launch_description():
     parameters=[{'use_sim_time': use_sim_time}]
     
 )
+    timeout = 10
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["joint_broad"],
+        parameters=[{'controller_manager_timeout' : timeout}],
     )
 
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["diff_drive_controller", "--param-file", robot_controllers],
+        parameters=[{'controller_manager_timeout' : timeout}],
+
     )
 
     joystick_node = Node(
