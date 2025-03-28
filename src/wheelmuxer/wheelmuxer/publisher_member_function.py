@@ -20,7 +20,6 @@ from sensor_msgs.msg import JointState
 import time
 from std_msgs.msg import Float32
 
-
 # class WheelPositionSubscriber(Node):
 #     def __init__(self):
 #         super().__init__('wheel_position_subscriber')
@@ -46,6 +45,8 @@ from std_msgs.msg import Float32
 class WheelPositionPublisher(Node):
     def __init__(self):
         super().__init__('wheel_position_publisher')
+        self.leftprev = 0
+        self.rightprev = 0
         self.publisher_ = self.create_publisher(JointState, 'wheelmux', 10)
         self.subscription_left = self.create_subscription(
             Float32,
@@ -66,15 +67,25 @@ class WheelPositionPublisher(Node):
         self.i = 0
 
     def listener_callback_left(self, msg):
-        self.get_logger().info('Left wheel position: "%s"' % msg.data)
         self.dataWheel[0] = msg.data
-
+        if abs((self.leftprev - msg.data)) > 100:
+            self.get_logger().info('Left wheel position: "%s"' % msg.data)
+            self.get_logger().info('if you see this, something is probably wrong. wheelmuxer detected a large jump in wheel position')
+        self.leftprev = msg.data
+        
     def listener_callback_right(self, msg):
-        self.get_logger().info('Right wheel position: "%s"' % msg.data)
         self.dataWheel[1] = msg.data
+        if abs((self.rightprev - msg.data)) > 100:
+          self.get_logger().info('Right wheel position: "%s"' % msg.data)
+          self.get_logger().info('if you see this, something is probably wrong. wheelmuxer detected a large jump in wheel position')
+
+        self.rightprev = msg.data
 
 
     def timer_callback(self):
+        if self.i == 0:
+            self.get_logger().info('WheelPositionPublisher is running')
+            self.get_logger().info('Publishing wheel positions to "/wheelmux" topic, as a JointState message')
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = ['left_wheel_joint', 'right_wheel_joint']  
@@ -83,7 +94,7 @@ class WheelPositionPublisher(Node):
         msg.velocity = [0,0] # Optionally add velocity data
         msg.effort = [0.0, 0.0]   # Optionally add effort data
         self.publisher_.publish(msg)
-        self.get_logger().info('Publishing: "%s"' % msg.position)
+        # self.get_logger().info('Publishing: "%s"' % msg.position)
         self.i += 1
 
 def main(args=None):
