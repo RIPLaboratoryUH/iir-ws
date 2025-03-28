@@ -209,6 +209,11 @@ def generate_launch_description():
        output='screen',
        parameters=[ekf_params, {'use_sim_time' : use_sim_time}]
        )
+    wheelmuxer = Node(
+        package='wheelmuxer',
+        executable='talker',
+        output='screen'
+    )
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -223,6 +228,7 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
+        wheelmuxer,
         # micro_ros_node,
         # twist_stamper,
         # joystick_node,
