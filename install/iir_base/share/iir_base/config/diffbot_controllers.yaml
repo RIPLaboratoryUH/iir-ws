@@ -1,7 +1,7 @@
 controller_manager:
   ros__parameters:
-    update_rate: 30
-    use_sim_time: true
+    update_rate: 60
+    use_sim_time: false
 
     diff_drive_controller:
       type: diff_drive_controller/DiffDriveController
@@ -18,7 +18,9 @@ diff_drive_controller:
 
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
-    wheel_separation: 0.48
+
+    wheel_separation: 0.62 #change this to be correct
+
     wheel_radius: 0.05
 
     use_stamped_vel: false
@@ -37,7 +39,7 @@ diff_drive_controller:
     # enable_odom_tf: x
 
     # cmd_vel_timeout: x
-    publish_limited_velocity: true
+    # publish_limited_velocity: true
     # velocity_rolling_window_size: x
     
 

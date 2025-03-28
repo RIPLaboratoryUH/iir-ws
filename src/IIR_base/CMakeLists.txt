@@ -24,6 +24,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ament_cmake
   ament_index_cpp
   yaml_cpp_vendor
+  topic_based_ros2_control
 )
 
 
