@@ -176,8 +176,7 @@ def generate_launch_description():
     output='screen'
 )
 
-    #static transform publisher - this should be somewhre else but im just testing
-    #apparently, this doesnt work here, but if we launch it in a terminal elsewhere it actually does publish the map->odom transform +map frame
+
     static_transform_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -185,6 +184,11 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
         output='screen'
 
+    )
+    odom_to_tf = Node(
+        package="odom_to_tf_ros2",
+        executable="odom_to_tf",
+        arguments=['--ros-args', '-p' ,'odom_topic:=diff_drive_controller/odom']
     )
     my_tf_publisher = Node(
         package="iir_base",
@@ -228,7 +232,11 @@ def generate_launch_description():
         # robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
+
         wheelmuxer,
+
+#         odom_to_tf,
+
         # micro_ros_node,
         # twist_stamper,
         # joystick_node,
@@ -236,7 +244,7 @@ def generate_launch_description():
         # bridge,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
-        rviz_node,
+        #rviz_node,
         joint_state_publisher,
         # my_tf_publisher,
         

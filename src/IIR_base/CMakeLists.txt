@@ -58,7 +58,6 @@ install(DIRECTORY src/
 )
 
 install(PROGRAMS
-  src/scripts/tf2_publish.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
