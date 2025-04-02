@@ -62,7 +62,7 @@ class WheelPositionPublisher(Node):
         self.subscription_left  # prevent unused variable warning
         self.subscription_right  # prevent unused variable warning
         self.dataWheel = [0,0]
-        timer_period = 0.1  # seconds
+        timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
 
