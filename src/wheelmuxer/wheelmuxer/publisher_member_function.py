@@ -47,7 +47,7 @@ class WheelPositionPublisher(Node):
         super().__init__('wheel_position_publisher')
         self.leftprev = 0
         self.rightprev = 0
-        self.publisher_ = self.create_publisher(JointState, 'wheelmux', 10)
+        self.publisher_ = self.create_publisher(JointState, 'wheelmux', 100)
         self.subscription_left = self.create_subscription(
             Float32,
             'left_wheel_pos',
