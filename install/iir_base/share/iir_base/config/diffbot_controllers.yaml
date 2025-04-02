@@ -21,7 +21,7 @@ diff_drive_controller:
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
 
-    wheel_separation: .508 #change this to be correct
+    wheel_separation: .508
 
     wheel_radius: 0.05
 
