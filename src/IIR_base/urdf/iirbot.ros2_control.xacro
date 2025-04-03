@@ -18,7 +18,7 @@
            <param name="joint_commands_topic">/joint_ctrl</param> <!-- this is the publisher-->
            <param name="joint_states_topic">/wheelmux</param> <!-- this is the subscriber-->
            <param name="sum_wrapped_joint_states">true</param>
-           <param name="trigger_joint_command_threshold">.005</param>
+           <param name="trigger_joint_command_threshold">-1</param>
            <param name="calculate_dynamics">true</param>
           </hardware>
       </xacro:if>
