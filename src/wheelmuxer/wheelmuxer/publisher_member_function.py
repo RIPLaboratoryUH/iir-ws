@@ -18,7 +18,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
 import time
-from std_msgs.msg import Float32
+from std_msgs.msg import Float64
 
 # class WheelPositionSubscriber(Node):
 #     def __init__(self):
@@ -49,13 +49,13 @@ class WheelPositionPublisher(Node):
         self.rightprev = 0
         self.publisher_ = self.create_publisher(JointState, 'wheelmux', 100)
         self.subscription_left = self.create_subscription(
-            Float32,
+            Float64,
             'left_wheel_pos',
             self.listener_callback_left,
             10)
         
         self.subscription_right = self.create_subscription(
-            Float32,
+            Float64,
             'right_wheel_pos',
             self.listener_callback_right,
             10)
