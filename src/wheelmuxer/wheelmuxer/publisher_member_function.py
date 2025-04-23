@@ -60,13 +60,13 @@ class WheelPositionPublisher(Node):
             Float64,
             'left_wheel_pos',
             self.listener_callback_left,
-            10, qos_profile=qos_profile)
+            qos_profile)
         
         self.subscription_right = self.create_subscription(
             Float64,
             'right_wheel_pos',
             self.listener_callback_right,
-            10, qos_profile=qos_profile)
+             qos_profile)
         self.subscription_left  # prevent unused variable warning
         self.subscription_right  # prevent unused variable warning
         self.dataWheel = [0,0]
