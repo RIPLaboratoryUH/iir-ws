@@ -7,8 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
-        - /RobotModel1/Links1
-        - /RobotModel1/Links1/base_link1
         - /CameraInfo1
         - /Camera1
         - /Camera1/Status1
@@ -179,16 +177,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 7.584183216094971
+      Distance: 23.153322219848633
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.5965678095817566
-        Y: 0.5900720357894897
-        Z: -0.3969449996948242
+        X: 4.2179999351501465
+        Y: 2.0607450008392334
+        Z: -3.9543962478637695
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -197,7 +195,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.032224081456661224
+      Yaw: 0.40222418308258057
     Saved: ~
 Window Geometry:
   Camera:
@@ -215,5 +213,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1854
-  X: 66
-  Y: 32
+  X: 36
+  Y: 370
