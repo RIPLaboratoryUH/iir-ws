@@ -23,7 +23,7 @@ diff_drive_controller:
 
     wheel_separation: .508
 
-    wheel_radius: 0.05
+    wheel_radius: 0.0635
 
     use_stamped_vel: false
 
