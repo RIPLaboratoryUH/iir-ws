@@ -32,16 +32,19 @@ class UDPSensorNode(Node):
         udp_thread.start()
 
     def udp_listener(self):
+        first = True
         while rclpy.ok():
             try:
                 data, addr = self.sock.recvfrom(1024)
                 message = data.decode().strip()
-                self.get_logger().info(f"Received message")
+                if first:
+                    first = False
+                    self.get_logger().info(f"Received a message. Hiding this statement from now on")
 
                 parts = message.split(',')
                 msg = Imu()
                 # msg.header.stamp = parts[0] #first item is timestamp
-                msg.header.frame_id = imu_topic_name
+                msg.header.frame_id = "imu_frame"
                 # Parse roll, pitch, yaw
                 #parts [1] is the shunt value
                 roll = float(parts[2])
@@ -52,7 +55,7 @@ class UDPSensorNode(Node):
                 msg.orientation.y = quat[1]
                 msg.orientation.z = quat[2]
                 msg.orientation.w = quat[3]
-                
+                msg.orientation_covariance = [0.0] * 9 # do i need to set these to real values, considering that the imu does filtering
                 self.publisher_.publish(msg)
 
             except Exception as e:

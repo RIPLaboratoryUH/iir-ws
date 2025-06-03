@@ -1,6 +1,5 @@
 # GPS WPF CHANGES: 
-# - amcl params where removed. They are not needed because global localization is provided
-#   by an ekf node on robot_localization fusing gps data with local odometry sources
+# - amcl params where removed. 
 # - static layer is removed from both costmaps, in this tutorial we assume there is no map
 #   of the environment
 # - global costmap is set to be rolling to allow the robot to traverse big environment by
@@ -42,7 +41,7 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.5
+      required_movement_radius: 0.25
       movement_time_allowance: 20.0 #allow more time before fail, prev 10
     # Goal checker parameters
     #precise_goal_checker:
@@ -53,8 +52,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.1
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
