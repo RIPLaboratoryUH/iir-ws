@@ -218,6 +218,12 @@ def generate_launch_description():
         executable='talker',
         output='screen'
     )
+
+    picolistener = Node(
+        package='picolistener',
+        executable='talker',
+        output='screen'
+    )
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -234,7 +240,7 @@ def generate_launch_description():
         robot_state_pub_node,
 
         wheelmuxer,
-
+        picolistener,
 #         odom_to_tf,
 
         # micro_ros_node,
