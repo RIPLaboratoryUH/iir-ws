@@ -19,7 +19,7 @@ setup(
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['talker = picolistener.publisher_member_function:main',
+        'console_scripts': ['listener16 = picolistener.publisher_member_function16:main', 'listener19 = picolistener.publisher_member_function19:main',
         ],
     },
 )
