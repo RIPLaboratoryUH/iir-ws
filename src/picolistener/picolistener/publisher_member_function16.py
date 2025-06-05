@@ -68,6 +68,7 @@ class UDPSensorNode(Node):
                 self.get_logger().error(f"UDP error: {e}")
 
 def main(args=None):
+    print("Starting m16_picolistener node")
     rclpy.init(args=args)
     node = UDPSensorNode()
     try:
