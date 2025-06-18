@@ -18,7 +18,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
 import time
-from std_msgs.msg import Float64
+from geometry_msgs.msg import Vector3
 from   rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 
 # class WheelPositionSubscriber(Node):
@@ -57,38 +57,29 @@ class WheelPositionPublisher(Node):
         )
 
         self.publisher_ = self.create_publisher(JointState, 'wheelmux', 100)
-        self.subscription_left = self.create_subscription(
-            Float64,
-            'left_wheel_pos',
-            self.listener_callback_left,
+        self.subscription = self.create_subscription(
+            Vector3,
+            'wheel_poses',
+            self.listener_callback,
             qos_profile)
-        
-        self.subscription_right = self.create_subscription(
-            Float64,
-            'right_wheel_pos',
-            self.listener_callback_right,
-             qos_profile)
-        self.subscription_left  # prevent unused variable warning
-        self.subscription_right  # prevent unused variable warning
+
         self.dataWheel = [0,0]
         timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
 
-    def listener_callback_left(self, msg):
-        self.dataWheel[0] = msg.data
-        if abs((self.leftprev - msg.data)) > 100:
-            self.get_logger().info('Left wheel position: "%s"' % msg.data)
+    def listener_callback(self, msg):
+        self.dataWheel[0] = msg.y
+        if abs((self.leftprev - msg.y)) > 100:
+            self.get_logger().info('Left wheel position: "%s"' % msg.y)
             self.get_logger().info('if you see this, something is probably wrong. wheelmuxer detected a large jump in wheel position')
-        self.leftprev = msg.data
-        
-    def listener_callback_right(self, msg):
-        self.dataWheel[1] = msg.data
-        if abs((self.rightprev - msg.data)) > 100:
-          self.get_logger().info('Right wheel position: "%s"' % msg.data)
+        self.leftprev = msg.y
+        self.dataWheel[1] = msg.z
+        if abs((self.rightprev - msg.z)) > 100:
+          self.get_logger().info('Right wheel position: "%s"' % msg.z)
           self.get_logger().info('if you see this, something is probably wrong. wheelmuxer detected a large jump in wheel position')
 
-        self.rightprev = msg.data
+        self.rightprev = msg.z
 
 
     def timer_callback(self):
