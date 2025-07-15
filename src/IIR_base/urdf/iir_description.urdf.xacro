@@ -83,6 +83,17 @@
       </link>
 
 
+<transmission name="left_wheel_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <actuator name="left_motor">
+    <mechanicalReduction>11.111</mechanicalReduction>
+  </actuator>
+  <joint name="left_wheel_joint">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+  </joint>
+</transmission>
+
+
     <gazebo reference="left_wheel">
       <mu1>1.0</mu1>
       <mu2>1.0</mu2>
@@ -140,6 +151,16 @@
       <fdir1 value="0 1 0"/>
       <material>Gazebo/DarkGrey</material>
     </gazebo>
+
+<transmission name="right_wheel_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <actuator name="right_motor">
+    <mechanicalReduction>11.111</mechanicalReduction>
+  </actuator>
+  <joint name="right_wheel_joint">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+  </joint>
+</transmission>
 
     <!-- <joint name="caster_frontal_wheel_joint" type="fixed">
       <parent link="base_link"/>

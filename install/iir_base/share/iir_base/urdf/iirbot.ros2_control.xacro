@@ -14,25 +14,56 @@
       <xacro:if value="${use_mock_hardware}">
         <hardware>
            <!-- <plugin>mock_components/GenericSystem</plugin> -->
-           <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
-           <param name="joint_commands_topic">/joint_ctrl</param> <!-- this is the publisher-->
-           <param name="joint_states_topic">/wheelmux</param> <!-- this is the subscriber-->
-           <param name="sum_wrapped_joint_states">true</param>
-           <param name="trigger_joint_command_threshold">-1</param>
-           <param name="calculate_dynamics">true</param>
+                  <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
+          <param name="can">can0</param>   
+           
+           
+          
+         
+        
           </hardware>
       </xacro:if>
       <joint name="left_wheel_joint">
+	             <param name="node_id">16</param>
         <command_interface name="velocity"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
-      </joint>
+</joint>
+
+
+
+
+
+
+
+
+
       <joint name="right_wheel_joint">
+	              <param name="node_id">19</param>
         <command_interface name="velocity"/>
         <state_interface name="position"/>
         <state_interface name="velocity"/>
       </joint>
-    </ros2_control>
+ <transmission name="transmission1">
+        <plugin>transmission_interface/SimpleTransmission</plugin>
+        <actuator name="actuator1" role="actuator1"/>
+        <joint name="left_wheel_joint" role="left_wheel_joint">
+          <mechanical_reduction>11.111111</mechanical_reduction>
+          <offset>0.0</offset>
+        </joint>
+      </transmission>
+ <transmission name="transmission2">
+        <plugin>transmission_interface/SimpleTransmission</plugin>
+        <actuator name="actuator2" role="actuator2"/>
+        <joint name="right_wheel_joint" role="right_wheel_joint">
+          <mechanical_reduction>11.111111</mechanical_reduction>
+          <offset>0.0</offset>
+        </joint>
+      </transmission>
+
+
+
+</ros2_control>
 <gazebo>
   <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
     <parameters>$(find iir_base)/config/diffbot_controllers.yaml</parameters>
@@ -49,7 +80,7 @@
 
   <!-- kinematics -->
   <wheel_separation>.508</wheel_separation>
-  <wheel_radius>0.0635</wheel_radius> <!-- computed from <wheel_diameter> in the original plugin-->
+  <wheel_radius>0.05715</wheel_radius> <!-- computed from <wheel_diameter> in the original plugin-->
 
   <!-- limits -->
   <max_linear_acceleration>100</max_linear_acceleration> <!-- computed from <max_linear_acceleration> in the original plugin-->
