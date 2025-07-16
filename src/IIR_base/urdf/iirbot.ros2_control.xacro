@@ -33,22 +33,7 @@
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
-      <transmission name="transmission1">
-        <plugin>transmission_interface/SimpleTransmission</plugin>
-        <actuator name="actuator1" role="actuator1" />
-        <joint name="left_wheel_joint" role="left_wheel_joint">
-          <mechanical_reduction>11.111111</mechanical_reduction>
-          <offset>0.0</offset>
-        </joint>
-      </transmission>
-      <transmission name="transmission2">
-        <plugin>transmission_interface/SimpleTransmission</plugin>
-        <actuator name="actuator2" role="actuator2" />
-        <joint name="right_wheel_joint" role="right_wheel_joint">
-          <mechanical_reduction>11.111111</mechanical_reduction>
-          <offset>0.0</offset>
-        </joint>
-      </transmission>
+      
 
 
     </ros2_control>
