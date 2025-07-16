@@ -5,56 +5,45 @@
 
     <ros2_control name="${name}" type="system">
       <xacro:unless value="${use_mock_hardware}">
- <hardware>
-    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-              <param name="calculate_dynamics">true</param>
-<!-- having calculate dynamics o -->
-  </hardware>
+        <hardware>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+          <param name="calculate_dynamics">true</param>
+          <!-- having calculate dynamics o -->
+        </hardware>
       </xacro:unless>
       <xacro:if value="${use_mock_hardware}">
         <hardware>
-           <!-- <plugin>mock_components/GenericSystem</plugin> -->
-                  <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
-          <param name="can">can0</param>   
-           
-           
-          
-         
-        
-          </hardware>
+          <!-- <plugin>mock_components/GenericSystem</plugin> -->
+          <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
+          <param name="can">can0</param>
+
+
+        </hardware>
       </xacro:if>
       <joint name="left_wheel_joint">
-	             <param name="node_id">16</param>
-        <command_interface name="velocity"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
-</joint>
-
-
-
-
-
-
-
-
-
-      <joint name="right_wheel_joint">
-	              <param name="node_id">19</param>
-        <command_interface name="velocity"/>
-        <state_interface name="position"/>
-        <state_interface name="velocity"/>
+        <param name="node_id">16</param>
+        <command_interface name="velocity" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
       </joint>
- <transmission name="transmission1">
+      
+      <joint name="right_wheel_joint">
+        <param name="node_id">19</param>
+        <command_interface name="velocity" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+      </joint>
+      <transmission name="transmission1">
         <plugin>transmission_interface/SimpleTransmission</plugin>
-        <actuator name="actuator1" role="actuator1"/>
+        <actuator name="actuator1" role="actuator1" />
         <joint name="left_wheel_joint" role="left_wheel_joint">
           <mechanical_reduction>11.111111</mechanical_reduction>
           <offset>0.0</offset>
         </joint>
       </transmission>
- <transmission name="transmission2">
+      <transmission name="transmission2">
         <plugin>transmission_interface/SimpleTransmission</plugin>
-        <actuator name="actuator2" role="actuator2"/>
+        <actuator name="actuator2" role="actuator2" />
         <joint name="right_wheel_joint" role="right_wheel_joint">
           <mechanical_reduction>11.111111</mechanical_reduction>
           <offset>0.0</offset>
@@ -62,47 +51,49 @@
       </transmission>
 
 
+    </ros2_control>
+    <gazebo>
+      <plugin filename="libgz_ros2_control-system.so"
+        name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(find iir_base)/config/diffbot_controllers.yaml</parameters>
+        <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
 
-</ros2_control>
-<gazebo>
-  <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-    <parameters>$(find iir_base)/config/diffbot_controllers.yaml</parameters>
-  <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
+      </plugin>
 
-  </plugin>
+      <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+        <!-- Remove <ros> tag. -->
 
-  <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-  <!-- Remove <ros> tag. -->
+        <!-- wheels -->
+        <left_joint>left_wheel_joint</left_joint>
+        <right_joint>right_wheel_joint</right_joint>
 
-  <!-- wheels -->
-  <left_joint>left_wheel_joint</left_joint>
-  <right_joint>right_wheel_joint</right_joint>
+        <!-- kinematics -->
+        <wheel_separation>.508</wheel_separation>
+        <wheel_radius>0.05715</wheel_radius> <!-- computed from <wheel_diameter> in the original
+        plugin-->
 
-  <!-- kinematics -->
-  <wheel_separation>.508</wheel_separation>
-  <wheel_radius>0.05715</wheel_radius> <!-- computed from <wheel_diameter> in the original plugin-->
+        <!-- limits -->
+        <max_linear_acceleration>100</max_linear_acceleration> <!-- computed from
+        <max_linear_acceleration> in the original plugin-->
 
-  <!-- limits -->
-  <max_linear_acceleration>100</max_linear_acceleration> <!-- computed from <max_linear_acceleration> in the original plugin-->
+        <topic>cmd_vel</topic> <!-- from <commant_topic> -->
 
-  <topic>cmd_vel</topic> <!-- from <commant_topic> -->
+        <odom_topic>odom</odom_topic> <!-- from <odometry_topic> -->
+        <frame_id>odom</frame_id> <!-- from <odometry_frame> -->
+        <child_frame_id>base_link</child_frame_id> <!-- from <robot_base_frame> -->
+        <odom_publisher_frequency>30</odom_publisher_frequency> <!-- from <update_rate>-->
 
-  <odom_topic>odom</odom_topic> <!-- from <odometry_topic> -->
-  <frame_id>odom</frame_id> <!-- from <odometry_frame> -->
-  <child_frame_id>base_link</child_frame_id> <!-- from <robot_base_frame> -->
-  <odom_publisher_frequency>30</odom_publisher_frequency> <!-- from <update_rate>-->
+        <tf_topic>/tf</tf_topic> <!-- Short topic name for tf output -->
 
-  <tf_topic>/tf</tf_topic> <!-- Short topic name for tf output -->
-
-</plugin>
-<!-- <plugin filename="gz-sim-joint-state-publisher-system"
+      </plugin>
+      <!-- <plugin filename="gz-sim-joint-state-publisher-system"
   name="gz::sim::systems::JointStatePublisher">
   <topic>joint_states</topic> 
   <joint_name>left_wheel_joint</joint_name>
   <joint_name>right_wheel_joint</joint_name>
 </plugin> -->
 
-</gazebo>
+    </gazebo>
   </xacro:macro>
 
 </robot>
