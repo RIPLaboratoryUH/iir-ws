@@ -45,6 +45,7 @@ private:
     SocketCanIntf can_intf_;
     rclcpp::Time timestamp_;
 };
+
 struct Axis {
     Axis(SocketCanIntf* can_intf, uint32_t node_id) : can_intf_(can_intf), node_id_(node_id) {}
 
@@ -54,9 +55,6 @@ struct Axis {
 
     SocketCanIntf* can_intf_;
     uint32_t node_id_;
-
-    // Gear reduction ratio: motor_turns / wheel_turns
-    static constexpr double gear_ratio_ = 11.1111;
 
     // Commands (ros2_control => ODrives)
     double pos_setpoint_ = 0.0f; // [rad]
@@ -262,23 +260,24 @@ return_type ODriveHardwareInterface::read(const rclcpp::Time& timestamp, const r
 
     return return_type::OK;
 }
+
 return_type ODriveHardwareInterface::write(const rclcpp::Time&, const rclcpp::Duration&) {
     for (auto& axis : axes_) {
         // Send the CAN message that fits the set of enabled setpoints
         if (axis.pos_input_enabled_) {
             Set_Input_Pos_msg_t msg;
-            msg.Input_Pos = (axis.pos_setpoint_ * axis.gear_ratio_) / (2 * M_PI);
-            msg.Vel_FF = axis.vel_input_enabled_ ? ((axis.vel_setpoint_ * axis.gear_ratio_) / (2 * M_PI)) : 0.0f;
-            msg.Torque_FF = axis.torque_input_enabled_ ? (axis.torque_setpoint_ / axis.gear_ratio_) : 0.0f;
+            msg.Input_Pos = axis.pos_setpoint_ / (2 * M_PI);
+            msg.Vel_FF = axis.vel_input_enabled_ ? (axis.vel_setpoint_ / (2 * M_PI)) : 0.0f;
+            msg.Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ : 0.0f;
             axis.send(msg);
         } else if (axis.vel_input_enabled_) {
             Set_Input_Vel_msg_t msg;
-            msg.Input_Vel = (axis.vel_setpoint_ * axis.gear_ratio_) / (2 * M_PI);
-            msg.Input_Torque_FF = axis.torque_input_enabled_ ? (axis.torque_setpoint_ / axis.gear_ratio_) : 0.0f;
+            msg.Input_Vel = axis.vel_setpoint_ / (2 * M_PI);
+            msg.Input_Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ : 0.0f;
             axis.send(msg);
         } else if (axis.torque_input_enabled_) {
             Set_Input_Torque_msg_t msg;
-            msg.Input_Torque = axis.torque_setpoint_ / axis.gear_ratio_;
+            msg.Input_Torque = axis.torque_setpoint_;
             axis.send(msg);
         } else {
             // no control enabled - don't send any setpoint
@@ -349,14 +348,14 @@ void Axis::on_can_msg(const rclcpp::Time&, const can_frame& frame) {
     switch (cmd) {
         case Get_Encoder_Estimates_msg_t::cmd_id: {
             if (Get_Encoder_Estimates_msg_t msg; try_decode(msg)) {
-                pos_estimate_ = (msg.Pos_Estimate * (2 * M_PI)) / gear_ratio_;
-                vel_estimate_ = (msg.Vel_Estimate * (2 * M_PI)) / gear_ratio_;
+                pos_estimate_ = msg.Pos_Estimate * (2 * M_PI);
+                vel_estimate_ = msg.Vel_Estimate * (2 * M_PI);
             }
         } break;
         case Get_Torques_msg_t::cmd_id: {
             if (Get_Torques_msg_t msg; try_decode(msg)) {
-                torque_target_ = msg.Torque_Target * gear_ratio_;
-                torque_estimate_ = msg.Torque_Estimate * gear_ratio_;
+                torque_target_ = msg.Torque_Target;
+                torque_estimate_ = msg.Torque_Estimate;
             }
         } break;
             // silently ignore unimplemented command IDs
