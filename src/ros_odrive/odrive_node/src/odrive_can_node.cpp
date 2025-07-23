@@ -170,11 +170,13 @@ void ODriveCanNode::recv_callback(const can_frame& frame) {
     }
     
     if (ctrl_pub_flag_ == 0b1111) {
+        ctrl_stat_.stamp = rclcpp::Node::now();
         ctrl_publisher_->publish(ctrl_stat_);
         ctrl_pub_flag_ = 0;
     }
     
     if (odrv_pub_flag_ == 0b111) {
+        odrv_stat_.stamp = rclcpp::Node::now();
         odrv_publisher_->publish(odrv_stat_);
         odrv_pub_flag_ = 0;
     }

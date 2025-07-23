@@ -19,6 +19,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 import time
 from geometry_msgs.msg import Vector3
+from nav_msgs.msg import Odometry 
 from   rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 
 # class WheelPositionSubscriber(Node):
@@ -55,13 +56,13 @@ class WheelPositionPublisher(Node):
             history=HistoryPolicy.KEEP_LAST,
             depth=1
         )
-
-        self.publisher_ = self.create_publisher(JointState, 'wheelmux', 100)
-        self.subscription = self.create_subscription(
-            Vector3,
-            'wheel_poses',
-            self.listener_callback,
-            qos_profile)
+        self.publisher_ = self.create_publisher(Odometry, 'fakeOdom', 100)
+        # self.publisher_ = self.create_publisher(JointState, 'wheelmux', 100)
+        # self.subscription = self.create_subscription(
+        #     Vector3,
+        #     'wheel_poses',
+        #     self.listener_callback,
+        #     qos_profile)
 
         self.dataWheel = [0,0]
         timer_period = 0.01  # seconds
@@ -86,17 +87,37 @@ class WheelPositionPublisher(Node):
         if self.i == 0:
             self.get_logger().info('WheelPositionPublisher is running')
             self.get_logger().info('Publishing wheel positions to "/wheelmux" topic, as a JointState message')
-        msg = JointState()
+            self.i+= 1
+        # msg = JointState()
+        # msg.header.stamp = self.get_clock().now().to_msg()
+        # msg.name = ['left_wheel_joint', 'right_wheel_joint']  
+        # msg.position = [self.dataWheel[0], self.dataWheel[1]]  
+        # # msg.position = [self.i, self.i]
+        # msg.velocity = [0,0] # Optionally add velocity data
+        # msg.effort = [0.0, 0.0]   # Optionally add effort data
+        # self.publisher_.publish(msg)
+        # # self.get_logger().info('Publishing: "%s"' % msg.position)
+        msg = Odometry()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.name = ['left_wheel_joint', 'right_wheel_joint']  
-        msg.position = [self.dataWheel[0], self.dataWheel[1]]  
-        # msg.position = [self.i, self.i]
-        msg.velocity = [0,0] # Optionally add velocity data
-        msg.effort = [0.0, 0.0]   # Optionally add effort data
+        msg.header.frame_id = 'odom'
+        msg.child_frame_id = 'base_link'
+        msg.pose.pose.position.x = 0.0
+        msg.pose.pose.position.y = 0.0
+        msg.pose.pose.position.z = 0.0
+        msg.pose.pose.orientation.x = 0.0
+        msg.pose.pose.orientation.y = 0.0
+        msg.pose.pose.orientation.z = 0.0
+        msg.pose.pose.orientation.w = 1.0
+        msg.twist.twist.linear.x = 0.0
+        msg.twist.twist.linear.y = 0.0
+        msg.twist.twist.linear.z = 0.0
+        msg.twist.twist.angular.x = 0.0
+        msg.twist.twist.angular.y = 0.0
+        msg.twist.twist.angular.z = 0.0
+        msg.pose.covariance = [0.0] * 36
+        msg.twist.covariance = [0.0] * 36
         self.publisher_.publish(msg)
-        # self.get_logger().info('Publishing: "%s"' % msg.position)
-        self.i += 1
-
+        # self.get_logger().info('Publishing: "%s"' % msg.pose.pose.position.x)
 def main(args=None):
     rclpy.init(args=args)
     wheel_position_publisher = WheelPositionPublisher()
