@@ -7,7 +7,7 @@
 #include "pluginlib/class_list_macros.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "socket_can.hpp"
-
+#define GEARRATIO 11.1111 // 
 namespace odrive_ros2_control
 {
 
@@ -283,8 +283,8 @@ return_type ODriveHardwareInterface::read(const rclcpp::Time &timestamp, const r
     int i = 0;
     for (auto &axis : axes_)
     {
-        scaled_positions_[i] = axis.pos_estimate_ / 11.111;
-        scaled_velocities_[i] = axis.vel_estimate_ / 11.111;
+        scaled_positions_[i] = axis.pos_estimate_ / GEARRATIO;
+        scaled_velocities_[i] = axis.vel_estimate_ / GEARRATIO;
         i++;
     }
     return return_type::OK;
@@ -298,22 +298,22 @@ return_type ODriveHardwareInterface::write(const rclcpp::Time &, const rclcpp::D
         if (axis.pos_input_enabled_)
         {
             Set_Input_Pos_msg_t msg;
-            msg.Input_Pos = axis.pos_setpoint_ / (2 * M_PI);
-            msg.Vel_FF = axis.vel_input_enabled_ ? (axis.vel_setpoint_ / (2 * M_PI)) : 0.0f;
-            msg.Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ : 0.0f;
+            msg.Input_Pos = axis.pos_setpoint_ * GEARRATIO / (2 * M_PI);
+            msg.Vel_FF = axis.vel_input_enabled_ ? (axis.vel_setpoint_ * GEARRATIO / (2 * M_PI)) : 0.0f;
+            msg.Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ * GEARRATIO : 0.0f;
             axis.send(msg);
         }
         else if (axis.vel_input_enabled_)
         {
             Set_Input_Vel_msg_t msg;
-            msg.Input_Vel = axis.vel_setpoint_ / (2 * M_PI);
-            msg.Input_Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ : 0.0f;
+            msg.Input_Vel = axis.vel_setpoint_ * GEARRATIO / (2 * M_PI);
+            msg.Input_Torque_FF = axis.torque_input_enabled_ ? axis.torque_setpoint_ * GEARRATIO : 0.0f;
             axis.send(msg);
         }
         else if (axis.torque_input_enabled_)
         {
             Set_Input_Torque_msg_t msg;
-            msg.Input_Torque = axis.torque_setpoint_;
+            msg.Input_Torque = axis.torque_setpoint_ * GEARRATIO;
             axis.send(msg);
         }
         else
