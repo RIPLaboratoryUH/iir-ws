@@ -120,6 +120,12 @@ CallbackReturn ODriveHardwareInterface::on_init(const hardware_interface::Hardwa
 
     can_intf_name_ = info_.hardware_parameters["can"];
 
+    size_t num_joints = info_.joints.size();
+
+    scaled_positions_.resize(num_joints, 0.0);
+    scaled_velocities_.resize(num_joints, 0.0);
+
+
     for (auto &joint : info_.joints)
     {
         axes_.emplace_back(&can_intf_, std::stoi(joint.parameters.at("node_id")));
