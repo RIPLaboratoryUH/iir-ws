@@ -352,7 +352,7 @@ void ODriveHardwareInterface::set_axis_command_mode(const Axis &axis)
     Set_Axis_State_msg_t state_msg;
 
     clear_error_msg.Identify = 0;
-    control_msg.Input_Mode = INPUT_MODE_PASSTHROUGH;
+    control_msg.Input_Mode = INPUT_MODE_VEL_RAMP;
     state_msg.Axis_Requested_State = AXIS_STATE_CLOSED_LOOP_CONTROL;
 
     if (axis.pos_input_enabled_)
