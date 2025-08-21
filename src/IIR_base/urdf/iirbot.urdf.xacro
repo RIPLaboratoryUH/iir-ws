@@ -8,7 +8,7 @@
 
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find iir_base)/urdf/iir.materials.xacro" />
-  <xacro:include filename="$(find iir_base)/urdf/hokuyo.urdf.xacro"/>
+  <xacro:include filename="$(find iir_base)/urdf/hokuyo_ust10.urdf.xacro"  />
 
   <!-- Import diffbot ros2_control description -->
   <xacro:include filename="$(find iir_base)/urdf/iirbot.ros2_control.xacro" />
@@ -17,7 +17,7 @@
   <xacro:hokuyo_ust10_mount prefix="" topic="scan" parent_link="base_link" min_angle="-2.35619" max_angle="2.35619">
   <origin xyz="0 0 0.1" rpy="0 0 0" />
   </xacro:hokuyo_ust10_mount>
-  
+
   <xacro:iirbot_ros2_control
     name="IirBot" prefix="$(arg prefix)" use_mock_hardware="$(arg use_mock_hardware)"/>
 
