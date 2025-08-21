@@ -11,11 +11,11 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, RegisterEventHandler
 from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -60,11 +60,12 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_lidar"
-            default_value="true"
+            "use_lidar",
+            default_value="true",
             description="activates URG node from lidar_launch, adds lidar to URDF"
         )
     )
+    
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
@@ -237,7 +238,7 @@ def generate_launch_description():
         output='screen'
     )
 
-   lidar = IncludeLaunchDescription(
+    lidar = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
                 FindPackageShare("lidar_launch"),

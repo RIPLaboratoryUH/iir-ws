@@ -8,6 +8,7 @@
 
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find iir_base)/urdf/iir.materials.xacro" />
+  <xacro:include filename="$(find iir_base)/urdf/hokuyo.urdf.xacro"/>
 
   <!-- Import diffbot ros2_control description -->
   <xacro:include filename="$(find iir_base)/urdf/iirbot.ros2_control.xacro" />
