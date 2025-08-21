@@ -11,11 +11,11 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, RegisterEventHandler
 from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
-
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -58,6 +58,14 @@ def generate_launch_description():
             description="publish cmd vel from joystick"
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_lidar",
+            default_value="true",
+            description="activates URG node from lidar_launch, adds lidar to URDF"
+        )
+    )
+    
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
@@ -229,6 +237,18 @@ def generate_launch_description():
         executable='listener19',
         output='screen'
     )
+
+    lidar = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("lidar_launch"),
+                "src",
+                "lidar_launch.py"
+            ])
+        ),
+        condition=IfCondition(LaunchConfiguration("use_lidar"))
+    )
+
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -244,7 +264,7 @@ def generate_launch_description():
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
 
-        wheelmuxer,
+       # wheelmuxer,
         picolistener16,
         picolistener19,
 #         odom_to_tf,
