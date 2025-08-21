@@ -73,8 +73,6 @@
 
 
 
-    <xacro:hokuyo_ust10_mount prefix="" topic="scan" parent_link="base_link" min_angle="-2.35619" max_angle="2.35619">
-  <origin xyz="0 0 0.1" rpy="0 0 0" />
-  </xacro:hokuyo_ust10_mount>
+  
 
 </robot>
