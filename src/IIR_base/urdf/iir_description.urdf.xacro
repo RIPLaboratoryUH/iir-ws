@@ -195,6 +195,7 @@
         </inertial>
       </link>
       -->
+      <link name="base_footprint" />
     <joint name="base_link_joint" type="fixed">
   <parent link="base_footprint"/>
   <child link="base_link"/>
