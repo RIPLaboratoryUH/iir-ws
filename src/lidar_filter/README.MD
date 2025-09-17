@@ -1,0 +1,1 @@
+This package will filter out lidar data from a specific range. Designed to remove obstructions from the incoming lidardata
