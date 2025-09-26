@@ -1,3 +1,6 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "python.analysis.extraPaths": [
+        "./build/odrive_can/rosidl_generator_py"
+    ]
 }
