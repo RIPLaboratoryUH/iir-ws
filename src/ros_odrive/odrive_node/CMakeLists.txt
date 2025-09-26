@@ -7,7 +7,9 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_srvs REQUIRED)
 
@@ -29,6 +31,7 @@ add_executable(odrive_can_node
   src/main.cpp
   include/odrive_can_node.hpp)
 
+
 ament_target_dependencies(odrive_can_node
   rclcpp
   std_srvs
@@ -43,6 +46,13 @@ install(
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
+)
+
+# Install Python executable
+install(PROGRAMS
+  odrive_can/keyboard_control.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME keyboard_control
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target
