@@ -28,7 +28,7 @@ amcl:
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     save_pose_rate: 0.5
     sigma_hit: 0.2
-    tf_broadcast: true
+    tf_broadcast: false
     transform_tolerance: 1.0
     introspection_mode: "disabled"
     update_min_a: 0.2
@@ -211,7 +211,7 @@ local_costmap:
       denoise_layer:
         plugin: "nav2_costmap_2d::DenoiseLayer"
         enabled: true
-        minimal_group_size: 2
+        minimal_group_size: 8
         group_connectivity_type: 8
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -253,7 +253,7 @@ global_costmap:
       denoise_layer:
         plugin: "nav2_costmap_2d::DenoiseLayer"
         enabled: True
-        minimal_group_size: 2
+        minimal_group_size: 8
         group_connectivity_type: 8
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -269,10 +269,10 @@ global_costmap:
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
 # If you'd rather set it in the yaml, remove the default "map" value in the launch file(s).
 # file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
-# map_server:
-#   ros__parameters:
-#     #yaml_filename: ""
-#     introspection_mode: "disabled"
+map_server:
+  ros__parameters:
+    yaml_filename: "/home/riplab/GIT/iir-ws/src/iir_nav2/maps/lab_map.yaml"
+    introspection_mode: "disabled"
 
 keepout_filter_mask_server:
   ros__parameters:
@@ -419,8 +419,8 @@ velocity_smoother:
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 2.0]
     min_velocity: [-0.5, 0.0, -2.0]
-    max_accel: [1.5, 0.0, 2.2] #subtract 1 because wheels spin too fast
-    max_decel: [-1.5, 0.0, -2.2]
+    max_accel: [1.0, 0.0, 1.7] #subtract 1.5 because wheels spin too fast
+    max_decel: [-1.0, 0.0, -1.7]
     odom_topic: "diff_drive_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
