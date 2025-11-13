@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<robot name="hokuyo"  xmlns:xacro="http://ros.org/wiki/xacro">
+  
+  <xacro:macro name="hokuyo_ust10_mount" params="prefix topic parent_link min_angle:=-2.35619 max_angle:=2.35619 *origin">
+
+    <xacro:macro name="hokuyo_ust10" params="frame:=laser topic:=scan sample_size:=720 update_rate:=50
+               min_angle:=${min_angle} max_angle:=${max_angle} min_range:=0.1 max_range:=30.0 robot_namespace:=/">
+      <link name="${frame}">
+        <inertial>
+          <mass value="1.1" />
+          <origin xyz="0 0 0" />
+          <inertia ixx="${0.0833333 * 1.1 * (0.102*0.102 + 0.152*0.152)}" ixy="0.0" ixz="0.0"
+            iyy="${0.0833333 * 1.1 * (0.105*0.105 + 0.152*0.152)}" iyz="0.0"
+            izz="${0.0833333 * 1.1 * (0.105*0.105 + 0.102*0.102)}" />
+        </inertial>
+      </link>
+
+      <gazebo reference="${frame}">
+        <turnGravityOff>true</turnGravityOff>
+        <sensor type="ray" name="${frame}">
+          <pose>0 0 0 0 0 0</pose>
+          <visualize>false</visualize>
+          <update_rate>${update_rate}</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>${sample_size}</samples>
+                <resolution>1</resolution>
+                <min_angle>${min_angle}</min_angle>
+                <max_angle>${max_angle}</max_angle>
+              </horizontal>
+            </scan>
+            <range>
+              <min>${min_range}</min>
+              <max>${max_range}</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </ray>
+          <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
+            <ros>
+              <namespace>${robot_namespace}</namespace>
+              <remapping>~/out:=${topic}</remapping>
+            </ros>
+            <output_type>sensor_msgs/LaserScan</output_type>
+            <frame_name>${frame}</frame_name>
+          </plugin>
+        </sensor>
+      </gazebo>
+    </xacro:macro>
+
+    <xacro:hokuyo_ust10 frame="laser" topic="${topic}"/>
+
+   
+
+    <joint name="laser_joint" type="fixed">
+      <!-- This offset is from the base of the bracket to the LIDAR's focal point. -->
+      <origin xyz="0 0 0.0474" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="laser" />
+    </joint>
+
+    <gazebo reference="laser_mount">
+    </gazebo>
+
+  </xacro:macro>
+
+
+
+ <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.05" radius="0.03"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+      </material>
+    </visual>
+
+  </link>
+
+
+    <!-- BASE_FOOTPRINT LINK -->
+
+              
+    <joint name="base_footprint_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_footprint"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+              
+    <link name="base_footprint">
+    </link>
+
+
+
+    <xacro:hokuyo_ust10_mount prefix="" topic="scan" parent_link="base_link" min_angle="-2.35619" max_angle="2.35619">
+  <origin xyz="0 0 0.1" rpy="0 0 0" />
+  </xacro:hokuyo_ust10_mount>
+
+</robot>

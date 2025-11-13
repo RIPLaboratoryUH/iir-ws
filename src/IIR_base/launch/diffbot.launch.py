@@ -238,14 +238,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    lidar = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("lidar_launch"),
-                "src",
-                "lidar_launch.py"
-            ])
-        ),
+    lidar = Node(
+            package="urg_node",
+            executable="urg_node_driver",
+            name="urg_node_driver",
+            output="screen",
         condition=IfCondition(LaunchConfiguration("use_lidar"))
     )
 
@@ -268,7 +265,7 @@ def generate_launch_description():
         picolistener16,
         picolistener19,
 #         odom_to_tf,
-
+        lidar,
         # micro_ros_node,
         # twist_stamper,
         # joystick_node,
