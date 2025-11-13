@@ -34,8 +34,8 @@ def main() -> None:
     
     initial_pose.header.frame_id = 'map'
     initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-    initial_pose.pose.position.x = -1.5
-    initial_pose.pose.position.y = 1.0
+    initial_pose.pose.position.x = 0.0
+    initial_pose.pose.position.y = 0.0
     initial_pose.pose.orientation.z = 0.0
     initial_pose.pose.orientation.w = 1.0
     navigator.setInitialPose(initial_pose)
@@ -51,24 +51,14 @@ def main() -> None:
     print('Going to goal pose 1...')
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 1.0
-    goal_pose.pose.position.y = 1.0
+    goal_pose.pose.position.x = 0.0
+    goal_pose.pose.position.y = 0.0
     goal_pose.pose.orientation.w = 1.0
 
-   # Get the path
-    path = navigator.getPath(initial_pose, goal_pose, use_start=True)
+    gotopose_task =  navigator.goToPose(goal_pose)
     
-    if path is None or not path.poses:
-        print('Failed to get path (planner may have failed, status code 6). Is the goal reachable? Exiting.')
-        exit(1)
-
-    print('Path received, smoothing...')
-    smoothed_path = navigator.smoothPath(path)
-
-    print('Smoothed path received, following path...')
-    follow_path_task = navigator.followPath(smoothed_path)
     i = 0
-    while not navigator.isTaskComplete(task=follow_path_task):
+    while not navigator.isTaskComplete():
         ################################################
         #
         # Implement some code here for your application!
@@ -77,13 +67,14 @@ def main() -> None:
 
         # Do something with the feedback
         i += 1
-        feedback = navigator.getFeedback(task=follow_path_task)
+        feedback = navigator.getFeedback()
+        # print(feedback)
         if feedback and i % 5 == 0:
             print(
                 'Estimated distance remaining to goal position: '
-                + f'{feedback.tracking_feedback.distance_to_goal:.3f}'
-                + '\nCurrent speed of the robot: '
-                + f'{feedback.tracking_feedback.speed:.3f}'
+                + f'{feedback.distance_remaining}'
+                + '\nCurrent time remaining: '
+                + f'{feedback.estimated_time_remaining}'
             )
 
     # Do something depending on the return code
@@ -97,7 +88,7 @@ def main() -> None:
         print('Goal failed!{error_code}:{error_msg}')
     else:
         print('Goal has an invalid return status!')
-    navigator.lifecycleShutdown()
+    # navigator.lifecycleShutdown()
     exit(0)
 
 

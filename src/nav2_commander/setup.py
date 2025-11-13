@@ -19,8 +19,10 @@ setup(
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['nav2_commander = nav2_commander.commander:main', 
-                        ],
+        'console_scripts': [
+            'nav2_commander = nav2_commander.commander:main',
+            'lawn_mower = nav2_commander.lawn_mower:main',
+        ],
     },
 )
 
