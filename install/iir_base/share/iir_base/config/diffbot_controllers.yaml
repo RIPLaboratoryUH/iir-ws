@@ -21,9 +21,13 @@ diff_drive_controller:
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
 
-    wheel_separation: .508
 
-    wheel_radius: 0.05715 
+    # distance between wheels (center to center) is 362mm
+    wheel_separation: 0.362
+
+    #wheel diameter is 0.167m
+    wheel_radius: 0.0835
+
     # wheel_radius: 0.0635
     # wheel_radius: 0.70555555555 #0.0635*11.1111111111
     use_stamped_vel: false
@@ -33,7 +37,9 @@ diff_drive_controller:
     # wheels_per_side: x
     # wheel_separation_multiplier: x
     # left_wheel_radius_multiplier: x
-    right_wheel_radius_multiplier: -1.0012
+
+    #remove radius multiplier as we have not measured true radius yet
+    # right_wheel_radius_multiplier: -1.0012
 
     # odom_frame_id: x
     # pose_covariance_diagonal: x

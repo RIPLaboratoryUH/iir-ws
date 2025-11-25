@@ -6,15 +6,15 @@
   <!-- Constants for robot dimensions -->
   <xacro:property name="PI" value="3.1415926535897931"/>
   <xacro:property name="base_mass" value="0.3" /> <!-- arbitrary value for base mass -->
-  <xacro:property name="base_width" value=".63" />
-  <xacro:property name="base_length" value=".57" />
-  <xacro:property name="base_height" value="0.17" />
+  <xacro:property name="base_width" value=".512" />
+  <xacro:property name="base_length" value=".5334" />
+  <xacro:property name="base_height" value="0.25" />
   <xacro:property name="wheel_mass" value="0.3" /> <!-- arbitrary value for wheel mass -->
   <xacro:property name="wheel_len" value="0.040" /> 
-  <!-- wheels are .5m apart -->
-  <xacro:property name="wheel_radius" value="0.0635" />
+  <!-- wheels are .362m apart -->
+  <xacro:property name="wheel_radius" value="0.0835" />
   <xacro:property name="caster_wheel_mass" value="0.1" /> <!-- arbitrary value for caster wheel mass -->
-  <xacro:property name="caster_wheel_radius" value="0.042" />
+  <xacro:property name="caster_wheel_radius" value="0.0835" />
   <xacro:property name="z_offset" value="-${base_height/3}" /> <!-- Space btw top of beam and the each joint -->
 
   <!-- Base Link -->
@@ -36,7 +36,7 @@
     </visual>
 
     <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="-.18 0 0" rpy="-.18 0 0"/>
       <mass value="${base_mass}"/>
       <inertia
         ixx="${base_mass / 12.0 * (base_length*base_length + base_height*base_height)}" ixy="0.0" ixz="0.0"
