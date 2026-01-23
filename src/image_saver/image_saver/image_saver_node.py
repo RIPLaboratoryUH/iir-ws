@@ -7,7 +7,7 @@ import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 
 
 class ImageSaverNode(Node):
@@ -27,24 +27,24 @@ class ImageSaverNode(Node):
         self.current_timestamp = None
         self.image_lock = False
         
-        # Subscribe to image topic
+        # Subscribe to compressed image topic
         self.subscription = self.create_subscription(
-            Image,
-            '/image_raw',
+            CompressedImage,
+            '/image_raw/compressed',
             self.image_callback,
             10
         )
         
-        # Create timer to save image every second
-        self.timer = self.create_timer(1.0, self.save_current_image)
+        # Create timer to save image every 3 seconds
+        self.timer = self.create_timer(3.0, self.save_current_image)
         
-        self.get_logger().info('Image Saver Node initialized. Saving snapshots every second.')
+        self.get_logger().info('Image Saver Node initialized. Saving snapshots every 3 seconds.')
     
-    def image_callback(self, msg: Image):
-        """Callback function for image subscription"""
+    def image_callback(self, msg: CompressedImage):
+        """Callback function for compressed image subscription"""
         try:
-            # Convert ROS image to OpenCV format
-            self.current_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            # Convert compressed ROS image to OpenCV format
+            self.current_image = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='bgr8')
             # Store the ROS timestamp
             self.current_timestamp = msg.header.stamp
             self.image_lock = False
