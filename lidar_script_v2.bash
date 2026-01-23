@@ -22,5 +22,6 @@ tmux send -t 0:0.2 "ros2 launch slam_toolbox online_async_launch.py slam_params_
 
 
 tmux send -t 0:0.3 "source install/local_setup.bash && ros2 run daly_bms_can daly_bms_pub" C-m
+tmux send -t 0:0.4 "source install/local_setup.bash && ros2 run usb_cam usb_cam_node_exe --ros-args -p video_device:=/dev/video0 -p framerate:=30.0 -p image_width:=640 -p image_height:=480" C-m
 
 tmux -2 attach-session -d
