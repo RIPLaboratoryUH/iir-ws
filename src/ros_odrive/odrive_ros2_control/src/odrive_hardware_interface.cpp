@@ -7,7 +7,7 @@
 #include "pluginlib/class_list_macros.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "socket_can.hpp"
-#define GEARRATIO 11.1111 // 
+#define GEARRATIO 140 // 
 namespace odrive_ros2_control
 {
 
