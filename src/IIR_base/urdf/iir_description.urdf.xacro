@@ -6,13 +6,13 @@
   <!-- Constants for robot dimensions -->
   <xacro:property name="PI" value="3.1415926535897931"/>
   <xacro:property name="base_mass" value="0.3" /> <!-- arbitrary value for base mass -->
-  <xacro:property name="base_width" value=".63" />
-  <xacro:property name="base_length" value=".57" />
+  <xacro:property name="base_width" value=".55" /> 
+  <xacro:property name="base_length" value=".51" />
   <xacro:property name="base_height" value="0.17" />
   <xacro:property name="wheel_mass" value="0.3" /> <!-- arbitrary value for wheel mass -->
   <xacro:property name="wheel_len" value="0.040" /> 
   <!-- wheels are .5m apart -->
-  <xacro:property name="wheel_radius" value="0.0635" />
+  <xacro:property name="wheel_radius" value="0.0825" />
   <xacro:property name="caster_wheel_mass" value="0.1" /> <!-- arbitrary value for caster wheel mass -->
   <xacro:property name="caster_wheel_radius" value="0.042" />
   <xacro:property name="z_offset" value="-${base_height/3}" /> <!-- Space btw top of beam and the each joint -->
@@ -83,16 +83,40 @@
       </link>
 
 
-<transmission name="left_wheel_trans">
-  <type>transmission_interface/SimpleTransmission</type>
-  <actuator name="left_motor">
-    <mechanicalReduction>11.111</mechanicalReduction>
-  </actuator>
-  <joint name="left_wheel_joint">
-    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-  </joint>
-</transmission>
+ <!-- IMU Link -->
+    <joint name="imu_joint_1" type="fixed">
+      <parent link="base_link"/>
+      <child link="imu_link_1"/>
+      <origin xyz="-0.35 -.20 ${base_height}" rpy="0 0 0"/>
+    </joint>
 
+    <link name="imu_link_1">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia
+          ixx="0.0001" ixy="0.0" ixz="0.0"
+          iyy="0.0001" iyz="0.0"
+          izz="0.0001"/>
+      </inertial>
+    </link>
+ <!-- IMU Link -->
+    <joint name="imu_joint_2" type="fixed">
+      <parent link="base_link"/>
+      <child link="imu_link_2"/>
+      <origin xyz="-0.35 .20 ${base_height}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="imu_link_2">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia
+          ixx="0.0001" ixy="0.0" ixz="0.0"
+          iyy="0.0001" iyz="0.0"
+          izz="0.0001"/>
+      </inertial>
+    </link>
 
     <gazebo reference="left_wheel">
       <mu1>1.0</mu1>
