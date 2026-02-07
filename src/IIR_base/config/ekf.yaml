@@ -31,7 +31,7 @@ ekf_filter_node:
         map_frame: map              # Defaults to "map" if unspecified
         odom_frame: odom            # Defaults to "odom" if unspecified
         base_link_frame: base_link  # Defaults to "base_link" ifunspecified
-        world_frame: map           # Defaults to the value ofodom_frame if unspecified
+        world_frame: odom           # Defaults to the value ofodom_frame if unspecified
         # Config: [x, y, z,
 #          roll, pitch, yaw,
 #          vx, vy, vz,
@@ -51,23 +51,23 @@ ekf_filter_node:
         
         imu1: /imu_1/data
         imu1_config: [false, false, false,
-                false, false, true,
-                false, false, false,
-                false, false, true,
-                true,  false, false]
+              false, false, true,    # absolute yaw
+              false, false, false,
+              false, false, true,    # yaw rate
+              false, false, false]
         imu1_nodelay: true
-        imu1_differential: true
+        imu1_differential: false
         imu1_relative: false
         imu1_queue_size: 10
 
         imu2: /imu_2/data
         imu2_config: [false, false, false,
-                false, false, true,
-                false, false, false,
-                false, false, true,
-                true,  false, false]
+              false, false, true,    # absolute yaw
+              false, false, false,
+              false, false, true,    # yaw rate
+              false, false, false]
         imu2_nodelay: true
-        imu2_differential: true
+        imu2_differential: false
         imu2_relative: false
         imu2_queue_size: 10
         

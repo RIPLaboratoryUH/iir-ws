@@ -257,15 +257,15 @@ def generate_launch_description():
 
     nodes = [
         # static_transform_publisher,
-    #    robot_localization_node,
         control_node, #make it so this is on when using 'mock hardware' and not on when using gz
         robot_state_pub_node,
 
        # wheelmuxer,
-        picolistener16,
-        picolistener19,
+        #picolistener16,
+        #picolistener19,
+        robot_localization_node,
 #         odom_to_tf,
-        lidar,
+        #lidar,
         # micro_ros_node,
         # twist_stamper,
         # joystick_node,
