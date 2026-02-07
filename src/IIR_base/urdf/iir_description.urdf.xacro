@@ -87,12 +87,12 @@
     <joint name="imu_joint_1" type="fixed">
       <parent link="base_link"/>
       <child link="imu_link_1"/>
-      <origin xyz="-0.35 -.20 ${base_height}" rpy="0 0 -${PI/2}"/>
+      <origin xyz="-0.35 -.20 ${base_height}" rpy="0 0 ${PI/2}"/>
     </joint>
 
     <link name="imu_link_1">
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 -${PI/2}"/>
+        <origin xyz="0 0 0" rpy="0 0 ${PI/2}"/>
         <mass value="0.01"/>
         <inertia
           ixx="0.0001" ixy="0.0" ixz="0.0"
@@ -104,13 +104,13 @@
   <joint name="imu_joint_2" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link_2"/>
-    <origin xyz="-0.35 .20 ${base_height}" rpy="0 0 -${PI/2}"/>
+    <origin xyz="-0.35 .20 ${base_height}" rpy="0 0 ${PI/2}"/>
   </joint>
 
 
     <link name="imu_link_2">
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 -${PI/2}"/>
+        <origin xyz="0 0 0" rpy="0 0 ${PI/2}"/>
         <mass value="0.01"/>
         <inertia
           ixx="0.0001" ixy="0.0" ixz="0.0"
