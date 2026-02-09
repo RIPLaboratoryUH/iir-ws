@@ -37,7 +37,7 @@ ekf_filter_node:
 #          vx, vy, vz,
 #          vroll, vpitch, vyaw,
 #          ax, ay, az]
-        odom0: diff_drive_controller/odom
+        odom0: /diff_drive_controller/odom
         odom0_config: [false, false, false,
                false, false, false,
                true,  true,  false,
@@ -68,7 +68,7 @@ ekf_filter_node:
               false, false, false]
         imu2_nodelay: true
         imu2_differential: false
-        imu2_relative: false
+        imu2_relative: true
         imu2_queue_size: 10
         
         
