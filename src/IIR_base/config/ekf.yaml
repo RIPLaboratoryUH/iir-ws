@@ -49,7 +49,20 @@ ekf_filter_node:
         odom0_relative: false
 
         
-        imu1: /imu_1/data
+        imu0: /imu_1/data
+        imu0_config: [false, false, false,
+              false, false, true,    # absolute yaw
+              false, false, false,
+              false, false, true,    # yaw rate
+              false, false, false]
+        imu0_nodelay: true
+        imu0_differential: false
+        imu0_relative: true
+        imu0_queue_size: 10
+        imu0_pose_covariance_diagonal: [0.001, 0.001, 0.001]
+        imu0_twist_covariance_diagonal: [0.001, 0.001, 0.001]
+
+        imu1: /imu_2/data
         imu1_config: [false, false, false,
               false, false, true,    # absolute yaw
               false, false, false,
@@ -61,18 +74,6 @@ ekf_filter_node:
         imu1_queue_size: 10
         imu1_pose_covariance_diagonal: [0.001, 0.001, 0.001]
         imu1_twist_covariance_diagonal: [0.001, 0.001, 0.001]
-        imu2: /imu_2/data
-        imu2_config: [false, false, false,
-              false, false, true,    # absolute yaw
-              false, false, false,
-              false, false, true,    # yaw rate
-              false, false, false]
-        imu2_nodelay: true
-        imu2_differential: false
-        imu2_relative: true
-        imu2_queue_size: 10
-        imu2_pose_covariance_diagonal: [0.001, 0.001, 0.001]
-        imu2_twist_covariance_diagonal: [0.001, 0.001, 0.001]
         
         
 
