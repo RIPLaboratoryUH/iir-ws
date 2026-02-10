@@ -51,13 +51,13 @@ ekf_filter_node:
         
         imu0: /imu_1/data
         imu0_config: [false, false, false,
-              false, false, false,
+              false, false, true,
               false, false, false,
               false, false, true,    # vyaw only
               false, false, false]
         imu0_nodelay: true
         imu0_differential: false
-        imu0_relative: false
+        imu0_relative: true
         imu0_queue_size: 10
         imu0_remove_gravitational_acceleration: true
 
@@ -69,7 +69,7 @@ ekf_filter_node:
               false, false, false]
         imu1_nodelay: true
         imu1_differential: false
-        imu1_relative: false
+        imu1_relative: true
         imu1_queue_size: 10
         imu1_remove_gravitational_acceleration: true
         
