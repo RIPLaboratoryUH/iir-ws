@@ -84,13 +84,13 @@
 
 
  <!-- IMU Link -->
-    <joint name="imu_joint_1" type="fixed">
+    <joint name="imu_joint_0" type="fixed">
       <parent link="base_link"/>
-      <child link="imu_link_1"/>
+      <child link="imu_link_0"/>
       <origin xyz="-0.35 -.20 ${base_height}" rpy="0 0 ${PI/2}"/>
     </joint>
 
-    <link name="imu_link_1">
+    <link name="imu_link_0">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 ${PI/2}"/>
         <mass value="0.01"/>
@@ -101,14 +101,14 @@
       </inertial>
     </link>
  <!-- IMU Link -->
-  <joint name="imu_joint_2" type="fixed">
+  <joint name="imu_joint_1" type="fixed">
     <parent link="base_link"/>
-    <child link="imu_link_2"/>
+    <child link="imu_link_1"/>
     <origin xyz="-0.35 .20 ${base_height}" rpy="0 0 ${PI/2}"/>
   </joint>
 
 
-    <link name="imu_link_2">
+    <link name="imu_link_1">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 ${PI/2}"/>
         <mass value="0.01"/>
