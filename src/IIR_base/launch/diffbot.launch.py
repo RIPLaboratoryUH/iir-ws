@@ -75,8 +75,15 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_arducam_tof",
-            default_value="false",
+            default_value="true",
             description="activates Arducam TOF camera pointcloud node"
+        )
+    )
+    declared_arguments.append( #run on groundstation but not on robot
+        DeclareLaunchArgument(
+            "use_display_marker",
+            default_value="false",
+            description="activates display_marker node for visualizing readings on map"
         )
     )
     
@@ -279,6 +286,15 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("use_arducam_tof"))
     )
 
+    display_marker = Node(
+        package="display_marker",
+        executable="display_marker_node",
+        name="display_marker_node",
+        output="screen",
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=IfCondition(LaunchConfiguration("use_display_marker"))
+    )
+
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -311,6 +327,7 @@ def generate_launch_description():
         # my_tf_publisher,
         display_reader,
         arducam_tof,
+        display_marker,
         
     ]
 
