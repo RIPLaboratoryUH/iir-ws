@@ -65,6 +65,20 @@ def generate_launch_description():
             description="activates URG node from lidar_launch, adds lidar to URDF"
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_display_reader",
+            default_value="true",
+            description="activates display_reader node for number recognition"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_arducam_tof",
+            default_value="false",
+            description="activates Arducam TOF camera pointcloud node"
+        )
+    )
     
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
@@ -246,6 +260,25 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("use_lidar"))
     )
 
+    display_reader = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("display_reader"),
+                "launch",
+                "display_reader.launch.py"
+            ])
+        ),
+        condition=IfCondition(LaunchConfiguration("use_display_reader"))
+    )
+
+    arducam_tof = Node(
+        package="arducam_rclpy_tof_pointcloud",
+        executable="tof_pointcloud",
+        name="arducam_tof_pointcloud",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("use_arducam_tof"))
+    )
+
     # Delay start of joint_state_broadcaster after `robot_controller`
     # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -276,6 +309,8 @@ def generate_launch_description():
         #rviz_node,
         joint_state_publisher,
         # my_tf_publisher,
+        display_reader,
+        arducam_tof,
         
     ]
 

@@ -1,2 +1,10 @@
-repositories: {}
+repositories:
+  number-recognizer:
+    type: git
+    url: https://github.com/RIPLaboratoryUH/number-recognizer.git
+    version: main
+  Arducam_tof_camera:
+    type: git
+    url: https://github.com/ArduCAM/Arducam_tof_camera.git
+    version: main
 
