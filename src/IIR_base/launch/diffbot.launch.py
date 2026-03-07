@@ -295,13 +295,15 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("use_display_marker"))
     )
 
-    # Delay start of joint_state_broadcaster after `robot_controller`
-    # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
-    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=robot_controller_spawner,
-            on_exit=[joint_state_broadcaster_spawner],
-        )
+    #ros2 run pointcloud_to_laserscan pointcloud_to_laserscan_node --ros-args -p min_height:=0.0 -p max_height:=5.0  -r  cloud_in:=/point_cloud
+    
+    pointcloud_to_laserscan = Node(
+        package="pointcloud_to_laserscan",
+        executable="pointcloud_to_laserscan_node",
+        name="pointcloud_to_laserscan_node",
+        output="screen",
+        parameters=[{'min_height': 0.0}, {'max_height': 1.0}],
+        remappings=[('cloud_in', '/point_cloud')]
     )
 
     nodes = [
@@ -328,7 +330,7 @@ def generate_launch_description():
         display_reader,
         arducam_tof,
         display_marker,
-        
+        pointcloud_to_laserscan
     ]
 
     return LaunchDescription(declared_arguments + nodes)
