@@ -77,4 +77,3 @@ install/iir_base/share/ament_index/resource_index/parent_prefix_path/iir_base
 
 # VCS imported repositories
 src/number-recognizer/
-src/Arducam_tof_camera/
