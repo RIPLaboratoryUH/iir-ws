@@ -74,6 +74,3 @@ install/iir_base/share/ament_index/resource_index/package_run_dependencies/iir_b
 install/iir_base/share/ament_index/resource_index/packages/iir_base
 *.cmake
 install/iir_base/share/ament_index/resource_index/parent_prefix_path/iir_base
-
-# VCS imported repositories
-src/number-recognizer/
