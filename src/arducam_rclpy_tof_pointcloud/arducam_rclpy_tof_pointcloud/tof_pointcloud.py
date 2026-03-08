@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from typing import Optional
+import sys
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
@@ -136,12 +137,16 @@ class TOFPublisher(Node):
 
 
 def main(args=None):
-    rclpy.init(args=args)
     parser = ArgumentParser()
     parser.add_argument("--cfg", type=str, help="Path to camera configuration file")
     parser.add_argument("--frame_id", type=str, default="depth_camera_optical_frame", help="Frame ID for point cloud messages")
     
-    ns = parser.parse_args()
+    # Initialize ROS first
+    rclpy.init(args=args)
+    
+    # Filter out ROS-specific arguments before parsing
+    filtered_args = rclpy.utilities.remove_ros_args(args if args is not None else sys.argv)
+    ns = parser.parse_args(filtered_args[1:])  # [1:] to skip program name
     
     options = Option()
     options.cfg = ns.cfg
