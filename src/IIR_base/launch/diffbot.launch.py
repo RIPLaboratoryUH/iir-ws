@@ -62,7 +62,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_lidar",
-            default_value="true",
+            default_value="false",
             description="activates URG node from lidar_launch, adds lidar to URDF"
         )
     )
@@ -76,7 +76,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_arducam_tof",
-            default_value="true",
+            default_value="false",
             description="activates Arducam TOF camera pointcloud node"
         )
     )
