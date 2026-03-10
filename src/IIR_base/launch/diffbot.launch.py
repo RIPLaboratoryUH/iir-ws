@@ -75,6 +75,13 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
+            "display_reader_exposure",
+            default_value="-3.0",
+            description="camera exposure for display reader (-1 = auto)"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
             "use_arducam_tof",
             default_value="false",
             description="activates Arducam TOF camera pointcloud node"
@@ -273,12 +280,12 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("display_reader"),
                 "launch",
-                "display_reader.launch.py",
-                "--ros-args",
-                "-p",
-                "exposure:=-3"
+                "display_reader.launch.py"
             ])
         ),
+        launch_arguments={
+            'exposure': LaunchConfiguration('display_reader_exposure')
+        }.items(),
         condition=IfCondition(LaunchConfiguration("use_display_reader"))
     )
 
