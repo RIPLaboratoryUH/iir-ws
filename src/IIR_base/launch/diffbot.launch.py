@@ -273,7 +273,10 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("display_reader"),
                 "launch",
-                "display_reader.launch.py"
+                "display_reader.launch.py",
+                "--ros-args",
+                "-p",
+                "exposure:=-3"
             ])
         ),
         condition=IfCondition(LaunchConfiguration("use_display_reader"))
