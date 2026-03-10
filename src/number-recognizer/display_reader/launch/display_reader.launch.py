@@ -12,7 +12,7 @@ def generate_launch_description():
                               description='Samples per second'),
         DeclareLaunchArgument('rotation', default_value='180',
                               description='Image rotation in degrees'),
-        DeclareLaunchArgument('exposure', default_value='-1.0',
+        DeclareLaunchArgument('exposure', default_value='3.0',
                               description='Camera exposure (-1 = auto)'),
         DeclareLaunchArgument('model_path', default_value='',
                               description='Path to TFLite model (empty = use installed)'),
