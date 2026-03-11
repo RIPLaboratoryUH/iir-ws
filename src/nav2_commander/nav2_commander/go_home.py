@@ -3,6 +3,7 @@
 
 import argparse
 import math
+import time
 
 from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
@@ -26,7 +27,8 @@ def main() -> None:
     navigator = BasicNavigator()
 
     print('Waiting for Nav2 to become active...')
-    navigator.waitUntilNav2Active()
+    # For odometry-only (no AMCL), just wait a few seconds for nav2 to spin up
+    time.sleep(3)
 
     goal = PoseStamped()
     goal.header.frame_id = 'map'
