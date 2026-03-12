@@ -1,4 +1,5 @@
 #!/bin/bash
+#old script
 
 tmux new-session -d bash
 tmux split-window -h bash

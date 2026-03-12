@@ -4,38 +4,31 @@
   <xacro:macro name="iirbot_ros2_control" params="name prefix use_mock_hardware">
 
     <ros2_control name="${name}" type="system">
-      <xacro:unless value="${use_mock_hardware}">
+      <xacro:if value="${use_mock_hardware}">
         <hardware>
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
           <param name="calculate_dynamics">true</param>
-          <!-- having calculate dynamics o -->
-        </hardware>
-      </xacro:unless>
-      <xacro:if value="${use_mock_hardware}">
-        <hardware>
-          <!-- <plugin>mock_components/GenericSystem</plugin> -->
-          <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
-          <param name="can">can0</param>
-
-
         </hardware>
       </xacro:if>
+      <xacro:unless value="${use_mock_hardware}">
+        <hardware>
+          <plugin>odrive_ros2_control_plugin/ODriveHardwareInterface</plugin>
+          <param name="can">can0</param>
+        </hardware>
+      </xacro:unless>
       <joint name="left_wheel_joint">
-        <param name="node_id">19</param>
+        <param name="node_id">19</param> <!-- ODrive node ID for left wheel -->
         <command_interface name="velocity" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
       
       <joint name="right_wheel_joint">
-        <param name="node_id">16</param>
+        <param name="node_id">16</param> <!-- ODrive node ID for right wheel -->
         <command_interface name="velocity" />
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
-      
-
-
     </ros2_control>
     <gazebo>
       <plugin filename="libgz_ros2_control-system.so"
