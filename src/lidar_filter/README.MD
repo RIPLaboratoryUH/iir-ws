@@ -1,1 +1,1 @@
-This package will filter out lidar data from a specific range. Designed to remove obstructions from the incoming lidardata
+This package will filter out lidar data from a specific range. Designed to remove obstructions from the incoming lidar data. Designed for an earlier version of the robot.

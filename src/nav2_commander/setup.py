@@ -20,9 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'nav2_commander = nav2_commander.commander:main',
             'lawn_mower = nav2_commander.lawn_mower:main',
             'go_home = nav2_commander.go_home:main',
+            'lawn_mower_path = nav2_commander.lawn_mower_path:main',
         ],
     },
 )

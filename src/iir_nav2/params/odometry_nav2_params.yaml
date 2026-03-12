@@ -63,7 +63,7 @@ controller_server:
     general_goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.1
-      yaw_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.01
       stateful: True
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
@@ -242,9 +242,9 @@ behavior_server:
     robot_base_frame: base_link
     transform_tolerance: 1.0
     simulate_ahead_time: 2.0
-    max_rotational_vel: 1.0
-    min_rotational_vel: 0.4
-    rotational_acc_lim: 3.2
+    max_rotational_vel: 0.2
+    min_rotational_vel: 0.01
+    rotational_acc_lim: 0.3
 
 waypoint_follower:
   ros__parameters:
@@ -270,11 +270,11 @@ velocity_smoother:
     enable_stamped_cmd_vel: True
     smoothing_frequency: 20.0
     scale_velocities: False
-    feedback: "OPEN_LOOP"
-    max_velocity: [0.5, 0.0, 2.0]
+    feedback: "CLOSED_LOOP"
+    max_velocity: [0.5, 0.0, 0.3]
     min_velocity: [-0.5, 0.0, -2.0]
-    max_accel: [1.0, 0.0, 1.7]
-    max_decel: [-1.0, 0.0, -1.7]
+    max_accel: [1.0, 0.0, 0.4]
+    max_decel: [-1.0, 0.0, -0.4]
     odom_topic: "diff_drive_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

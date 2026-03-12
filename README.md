@@ -17,17 +17,16 @@ Note: Run each of these commands one at a time. You do not need ROS2 installed t
 
 Then run these commands to configure the pi (must be done every time robot is reset). Run these commands one at a time.
 
-```sudo ip link set can0 down
-$ sudo ip link set can0 down
+```
+$ sudo ip link set can0 down 
 $ sudo ip link set can0 type can bitrate 1000000
 $ sudo ip link set can0 up
-$ expz
 $ source install/local_setup.bash
 $ cd iir-ws
-$ ./lidar_script
+$ ./start_script
 ```
 
-This will open 3 windows, the 1st is the base control system, the second is a zenoh router, the third is the map node. 
+This will open 2 windows, the 1st is the base control system, the second is the micro-ros node. 
 
 To start the teleop controller, hit CTRL-B and then % to open a new tmux window. In the new window, run this command:
 
@@ -35,7 +34,7 @@ To start the teleop controller, hit CTRL-B and then % to open a new tmux window.
 $ ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
 ```
 
-this final command will open up a window that will allow you to drive the robot around.
+this final command will open up a window that will allow you to drive the robot around. You may also run this command on your local machine.
 
 Controls:
 
@@ -57,7 +56,7 @@ CTRL-C any of the tmux windows, then run
 
 This will force quit all tmux windows.
 
-Then redo the `./lidar_script` , open a new tmux pane, and rerun the teleop twist command.
+Then redo the `./start_script` , open a new tmux pane, and rerun the teleop twist command.
 
 
 
@@ -69,5 +68,4 @@ user: `admin`
 
 pw: you know this one
 
-Click on clients to see all devices connected. If the PI is not showing up here then you should try shutting down and rebooting the PI.  If this does not fix it, then replace the microSD card with one of the others on my desk.
-
+Click on clients to see all devices connected. If the PI is not showing up here then you should try shutting down and rebooting the PI. We have seen issues where the PI SD card will not boot up. In this case, refer to phase 3 of this document: Raspberry Pi Ubuntu SD Card Backup, which can be found at RIPLAB>UXS>InfrastructureInspection
