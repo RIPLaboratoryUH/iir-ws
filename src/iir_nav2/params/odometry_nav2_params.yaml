@@ -62,49 +62,35 @@ controller_server:
       movement_time_allowance: 10.0
     general_goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.1
-      yaw_goal_tolerance: 0.01
+      xy_goal_tolerance: 0.05
+      yaw_goal_tolerance: 0.1
       stateful: True
     FollowPath:
-      plugin: "dwb_core::DWBLocalPlanner"
-      debug_trajectory_details: True
-      min_vel_x: 0.0
-      min_vel_y: 0.0
-      max_vel_x: 0.15
-      max_vel_y: 0.0
-      max_vel_theta: 1.0
-      min_speed_xy: 0.0
-      max_speed_xy: 0.15
-      min_speed_theta: 0.0
-      acc_lim_x: 0.8
-      acc_lim_y: 0.0
-      acc_lim_theta: 1.2
-      decel_lim_x: -0.8
-      decel_lim_y: 0.0
-      decel_lim_theta: -1.2
-      vx_samples: 20
-      vy_samples: 5
-      vtheta_samples: 20
-      sim_time: 3.0
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 0.12
+      lookahead_dist: 0.45
+      min_lookahead_dist: 0.2
+      max_lookahead_dist: 0.7
+      lookahead_time: 1.5
+      rotate_to_heading_angular_vel: 0.5
       transform_tolerance: 1.0
-      xy_goal_tolerance: 0.1
-      trans_stopped_velocity: 0.25
-      short_circuit_trajectory_evaluation: True
-      limit_vel_cmd_in_traj: False
-      stateful: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.02
-      PathAlign.scale: 32.0
-      GoalAlign.scale: 24.0
-      PathAlign.forward_point_distance: 0.1
-      GoalAlign.forward_point_distance: 0.1
-      PathDist.scale: 32.0
-      GoalDist.scale: 24.0
-      RotateToGoal.scale: 32.0
-      RotateToGoal.slowing_factor: 5.0
-      RotateToGoal.lookahead_time: -1.0
+      use_velocity_scaled_lookahead_dist: false
+      min_approach_linear_velocity: 0.03
+      approach_velocity_scaling_dist: 0.6
+      use_collision_detection: true
+      max_allowed_time_to_collision_up_to_carrot: 1.0
+      use_regulated_linear_velocity_scaling: true
+      use_fixed_curvature_lookahead: false
+      curvature_lookahead_dist: 0.25
+      use_cost_regulated_linear_velocity_scaling: false
+      regulated_linear_scaling_min_radius: 0.9
+      regulated_linear_scaling_min_speed: 0.25
+      use_rotate_to_heading: true
+      allow_reversing: false
+      rotate_to_heading_min_angle: 0.2
+      max_angular_accel: 0.35
+      max_robot_pose_search_dist: 10.0
+      interpolation_resolution: 0.1
 
 local_costmap:
   local_costmap:
@@ -231,7 +217,7 @@ behavior_server:
     drive_on_heading:
       plugin: "nav2_behaviors::DriveOnHeading"
       acceleration_limit: 2.5
-      deceleration_limit: -2.5
+      deceleration_limit: -4.5
       minimum_speed: 0.10
     wait:
       plugin: "nav2_behaviors::Wait"
@@ -272,9 +258,9 @@ velocity_smoother:
     scale_velocities: False
     feedback: "CLOSED_LOOP"
     max_velocity: [0.5, 0.0, 0.3]
-    min_velocity: [-0.5, 0.0, -2.0]
+    min_velocity: [-0.5, 0.0, -0.3]
     max_accel: [1.0, 0.0, 0.4]
-    max_decel: [-1.0, 0.0, -0.4]
+    max_decel: [-1.0, 0.0, -0.8]
     odom_topic: "diff_drive_controller/odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

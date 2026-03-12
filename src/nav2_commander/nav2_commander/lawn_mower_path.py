@@ -6,6 +6,7 @@ from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 import rclpy
 import math
+import time
 
 def create_pose(navigator, x, y, yaw):
     """
@@ -72,9 +73,7 @@ def execute_goal(navigator, goal_pose, goal_name):
         return False
     
 
-def create_poses(navigator, num_rows, row_length, row_spacing):
-    poses = []
-
+def iter_lawn_mower_waypoints(navigator, num_rows, row_length, row_spacing):
     # Start at origin facing +X (yaw = 0).
     x = 0.0
     y = 0.0
@@ -85,7 +84,7 @@ def create_poses(navigator, num_rows, row_length, row_spacing):
         # 1) Drive forward along current heading by row_length.
         x += row_length * math.cos(yaw)
         y += row_length * math.sin(yaw)
-        poses.append(create_pose(navigator, x, y, yaw))
+        yield create_pose(navigator, x, y, yaw), f'row {row + 1} long strip'
 
         # No corner maneuver after the last long strip.
         if row == num_rows - 1:
@@ -93,30 +92,25 @@ def create_poses(navigator, num_rows, row_length, row_spacing):
 
         # 2) Turn 90 deg in place.
         yaw += turn_sign * (math.pi / 2.0)
-        poses.append(create_pose(navigator, x, y, yaw))
+        yield create_pose(navigator, x, y, yaw), f'row {row + 1} first corner turn'
 
-        # 3) Drive forward by row_spacing in the new heading.
+        # 3) Drive forward by row_spacing AND turn 90 deg to align with next long strip (combined move+turn).
         x += row_spacing * math.cos(yaw)
         y += row_spacing * math.sin(yaw)
-        poses.append(create_pose(navigator, x, y, yaw))
-
-        # 4) Turn 90 deg in place again to align with next long strip.
         yaw += turn_sign * (math.pi / 2.0)
-        poses.append(create_pose(navigator, x, y, yaw))
+        yield create_pose(navigator, x, y, yaw), f'row {row + 1} spacing shift and turn'
 
         # Alternate turn direction each strip pair to make a serpentine path.
         turn_sign *= -1.0
-
-    return poses
 
 def main() -> None:
     num_rows = 5
     row_length = 2.0       # Drive forward 2 meters per row
     row_spacing = 0.1      # 10 cm spacing between rows
+    post_goal_delay = 0.3  # Brief settle time after each completed segment
     
     rclpy.init()
     navigator = BasicNavigator()
-    poses = create_poses(navigator, num_rows,row_length,row_spacing)
     # Wait for navigation to fully activate
     print('Waiting for Nav2 to activate...')
     # navigator.waitUntilNav2Active()
@@ -134,14 +128,14 @@ def main() -> None:
     navigator.setInitialPose(initial_pose)
     print('Initial pose set at origin')
 
-    navigator.goThroughPoses(poses)
-    i = 0
-    while not navigator.isTaskComplete():
-        i += 1
-        feedback = navigator.getFeedback()
-        if feedback and i % 10 == 0:
-            print(f'  Distance remaining: {feedback.distance_remaining:.2f}m')
-    exit(0)
+    # Send each waypoint individually so Nav2 must complete each segment in order.
+    for pose, goal_name in iter_lawn_mower_waypoints(navigator, num_rows, row_length, row_spacing):
+        if not execute_goal(navigator, pose, goal_name):
+            print('Mission aborted due to failed segment.')
+            return
+        time.sleep(post_goal_delay)
+
+    print('Lawn mower mission complete.')
 
 
 if __name__ == '__main__':
