@@ -53,14 +53,7 @@ float64 data              # Display reading (NaN when dashes shown)
 ---
 
 ## RPi5 Deployment
-
-Only these files are needed on the Pi:
-
-```
-live_feed.py
-display_utils.py
-models/digit_cnn.tflite
-```
+You may need to install some opencv/numpy/tflite packages.
 
 Install:
 ```bash
