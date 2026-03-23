@@ -7,13 +7,6 @@ See the number-recognizer repo for more information on how this was made.
 
 The `display_reader` and `display_reader_msgs` packages wrap the live feed into a ROS2 node.
 
-### Build
-```bash
-cd ~/GIT/number-recognizer
-colcon build
-source install/setup.bash
-```
-
 ### Run
 ```bash
 ros2 run display_reader display_reader_node
