@@ -21,8 +21,8 @@ Then run these commands to configure the pi (must be done every time robot is re
 $ sudo ip link set can0 down 
 $ sudo ip link set can0 type can bitrate 1000000
 $ sudo ip link set can0 up
-$ source install/local_setup.bash
 $ cd iir-ws
+$ source install/local_setup.bash
 $ ./start_script
 ```
 
