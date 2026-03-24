@@ -5,6 +5,33 @@ cloning this package, then doing ```colcon build``` then ```ros2 launch iir_base
 Refer to the READMEs inside the individual package folders for more information.
 
 
+## Micro-ROS setup
+If this is your first time using this repository on a new machine and you plan on using micro-ros to communicate with the Teensy (which is how we obtain the IMU data for use with the EKF), you will need to setup micro-ros.
+Follow these steps to add micro-ros to the repository.
+```
+cd iir-ws/src
+git clone -b jazzy https://github.com/micro-ROS/micro_ros_setup.git src/micro_ros_setup
+# Update dependencies using rosdep
+sudo apt update && rosdep update
+rosdep install --from-paths src --ignore-src -y
+# Install pip
+sudo apt-get install python3-pip
+```
+Go back up to iir-ws
+```
+colcon build
+source install/local_setup.bash
+ros2 run micro_ros_setup create_agent_ws.sh
+# Build step
+ros2 run micro_ros_setup build_agent.sh
+```
+The build step will take a minute to compile. Once this completes you should be able to run
+```
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyACM0
+```
+And see some IMU topics. This assumes wiring and the teensy/imus are setup properly already. If you are still having issues, refer to Micro-ROS / IMU / Teensy Guide in the Google Drive.
+
+
 ## IIR Simple Driving Tutorial
 
 Note: Run each of these commands one at a time. You do not need ROS2 installed to follow this, you simply need a terminal with SSH capabilites.
