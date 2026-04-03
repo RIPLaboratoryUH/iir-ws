@@ -23,6 +23,7 @@ setup(
             'lawn_mower = nav2_commander.lawn_mower:main',
             'go_home = nav2_commander.go_home:main',
             'lawn_mower_path = nav2_commander.lawn_mower_path:main',
+            'rectangular_path = nav2_commander.rectangular_path:main',
         ],
     },
 )
