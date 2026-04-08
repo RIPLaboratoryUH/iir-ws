@@ -68,24 +68,24 @@ def execute_rectangle(navigator: BasicNavigator, args: argparse.Namespace) -> bo
         pose.pose.orientation.z = math.sin(yaw / 2.0)
         pose.pose.orientation.w = math.cos(yaw / 2.0)
         return pose
-    waypoints = [
-        create_pose(0.0, 0.0, 0.0),
-        create_pose(0.10, 0.0, -math.pi/2),
-        create_pose(0.10, -0.13, -math.pi),
-        create_pose(0.0, -0.13, -math.pi/2),
-        create_pose(0.0, -0.26, 0.0),
-        create_pose(0.10, -0.26, -math.pi/2),
-        create_pose(0.10, -0.39, -math.pi),
-        create_pose(0.00, -0.39, -math.pi/2),
-    ]
-
     # waypoints = [
     #     create_pose(0.0, 0.0, 0.0),
-    #     create_pose(2.0, 0.0, -math.pi/2),
-    #     create_pose(2.0, -1.0, math.pi),
-    #     create_pose(0.0, -1.0, math.pi/2),
-    #     create_pose(0.0, 0.0, 0.0)
+    #     create_pose(0.10, 0.0, -math.pi/2),
+    #     create_pose(0.10, -0.13, -math.pi),
+    #     create_pose(0.0, -0.13, -math.pi/2),
+    #     create_pose(0.0, -0.26, 0.0),
+    #     create_pose(0.10, -0.26, -math.pi/2),
+    #     create_pose(0.10, -0.39, -math.pi),
+    #     create_pose(0.00, -0.39, -math.pi/2),
     # ]
+
+    waypoints = [
+        create_pose(0.0, 0.0, 0.0),
+        create_pose(2.0, 0.0, -math.pi/2),
+        create_pose(2.0, -1.0, math.pi),
+        create_pose(0.0, -1.0, math.pi/2),
+        create_pose(0.0, 0.0, 0.0)
+    ]
 
     for lap in range(args.repeats):
         print(f'Starting rectangle {lap + 1}/{args.repeats}')

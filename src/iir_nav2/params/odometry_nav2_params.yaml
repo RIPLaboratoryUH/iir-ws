@@ -11,7 +11,7 @@ bt_navigator:
     filter_duration: 0.3
     default_server_timeout: 20
     wait_for_service_timeout: 1000
-    goal_reached_tol: 0.25
+    goal_reached_tol: 0.005 # changed from 0.25 to 0.005 for parity with xy goal tolerance
     introspection_mode: "disabled"
     navigators: ["navigate_to_pose", "navigate_through_poses"]
     navigate_to_pose:
@@ -62,9 +62,9 @@ controller_server:
       movement_time_allowance: 10.0
     general_goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker" # use stopped goal checker
-      xy_goal_tolerance: 0.005
+      xy_goal_tolerance: 0.01
       # Changed from 0.1 to 6.28 (2*pi) to make waypoint follower ignore the yaw of the robot
-      yaw_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.15 # increase to reducing spinning at goal xy
       # yaw_goal_tolerance: 6.28
       stateful: True
     FollowPath:
@@ -74,7 +74,7 @@ controller_server:
       min_lookahead_dist: 0.2
       max_lookahead_dist: 0.7
       lookahead_time: 1.5
-      rotate_to_heading_angular_vel: 0.5
+      rotate_to_heading_angular_vel: 0.3 # changed from 0.5 to reducing spinning at goal xy
       transform_tolerance: 1.0
       use_velocity_scaled_lookahead_dist: false
       min_approach_linear_velocity: 0.03
@@ -223,7 +223,7 @@ behavior_server:
     drive_on_heading:
       plugin: "nav2_behaviors::DriveOnHeading" #look at source code to see how it knows whether to stop driving
       acceleration_limit: 2.5
-      deceleration_limit: -4.5
+      deceleration_limit: -12.5 # try increasing deceleration limit to make it stop faster at the end of a goal
       minimum_speed: 0.10
     wait:
       plugin: "nav2_behaviors::Wait"
