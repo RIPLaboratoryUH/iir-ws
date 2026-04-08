@@ -6,7 +6,7 @@ bt_navigator:
   ros__parameters:
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: diff_drive_controller/odom
+    odom_topic: /odometry/filtered
     bt_loop_duration: 10
     filter_duration: 0.3
     default_server_timeout: 20
@@ -53,7 +53,7 @@ controller_server:
     controller_plugins: ["FollowPath"]
     use_realtime_priority: false
     speed_limit_topic: "speed_limit"
-    odom_topic: "diff_drive_controller/odom"
+    odom_topic: "/odometry/filtered"
     enable_stamped_cmd_vel: True
     odom_duration: 0.2
     progress_checker:
@@ -61,9 +61,11 @@ controller_server:
       required_movement_radius: 0.5
       movement_time_allowance: 10.0
     general_goal_checker:
-      plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.05
+      plugin: "nav2_controller::SimpleGoalChecker" # use stopped goal checker
+      xy_goal_tolerance: 0.005
+      # Changed from 0.1 to 6.28 (2*pi) to make waypoint follower ignore the yaw of the robot
       yaw_goal_tolerance: 0.1
+      # yaw_goal_tolerance: 6.28
       stateful: True
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
@@ -85,7 +87,9 @@ controller_server:
       use_cost_regulated_linear_velocity_scaling: false
       regulated_linear_scaling_min_radius: 0.9
       regulated_linear_scaling_min_speed: 0.25
+      # Changed from true to false to stop trying to spin in place at the end of each goal
       use_rotate_to_heading: true
+      # use_rotate_to_heading: false
       allow_reversing: false
       rotate_to_heading_min_angle: 0.2
       max_angular_accel: 0.35
@@ -138,7 +142,9 @@ global_costmap:
       robot_base_frame: base_link
       robot_radius: 0.22
       resolution: 0.05
-      track_unknown_space: true
+      # track_unknown_space: true
+      # Changed from true to false: allows for unknown space to be treated as free space, which is important for odometry-only operation
+      track_unknown_space: false
       rolling_window: true
       width: 10
       height: 10
@@ -215,7 +221,7 @@ behavior_server:
       deceleration_limit: -2.5
       minimum_speed: 0.10
     drive_on_heading:
-      plugin: "nav2_behaviors::DriveOnHeading"
+      plugin: "nav2_behaviors::DriveOnHeading" #look at source code to see how it knows whether to stop driving
       acceleration_limit: 2.5
       deceleration_limit: -4.5
       minimum_speed: 0.10
@@ -261,7 +267,7 @@ velocity_smoother:
     min_velocity: [-0.5, 0.0, -0.3]
     max_accel: [1.0, 0.0, 0.4]
     max_decel: [-1.0, 0.0, -0.8]
-    odom_topic: "diff_drive_controller/odom"
+    odom_topic: "/odometry/filtered"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0

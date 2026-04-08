@@ -84,29 +84,30 @@ def iter_lawn_mower_waypoints(navigator, num_rows, row_length, row_spacing):
         # 1) Drive forward along current heading by row_length.
         x += row_length * math.cos(yaw)
         y += row_length * math.sin(yaw)
+        yaw += turn_sign * (math.pi / 2.0)
         yield create_pose(navigator, x, y, yaw), f'row {row + 1} long strip'
 
         # No corner maneuver after the last long strip.
         if row == num_rows - 1:
             break
 
-        # 2) Turn 90 deg in place.
-        yaw += turn_sign * (math.pi / 2.0)
-        yield create_pose(navigator, x, y, yaw), f'row {row + 1} first corner turn'
+        # # 2) Turn 90 deg in place.
+        # yaw += turn_sign * (math.pi / 2.0)
+        # yield create_pose(navigator, x, y, yaw), f'row {row + 1} first corner turn'
 
         # 3) Drive forward by row_spacing AND turn 90 deg to align with next long strip (combined move+turn).
         x += row_spacing * math.cos(yaw)
         y += row_spacing * math.sin(yaw)
-        yaw += turn_sign * (math.pi / 2.0)
+        yaw += turn_sign * (math.pi  / 2.0)
         yield create_pose(navigator, x, y, yaw), f'row {row + 1} spacing shift and turn'
 
         # Alternate turn direction each strip pair to make a serpentine path.
-        turn_sign *= -1.0
+        # turn_sign *= -1.0
 
 def main() -> None:
     num_rows = 5
     row_length = 2.0       # Drive forward 2 meters per row
-    row_spacing = 0.1      # 10 cm spacing between rows
+    row_spacing = 1.0     # 100 cm spacing between rows
     post_goal_delay = 0.3  # Brief settle time after each completed segment
     
     rclpy.init()

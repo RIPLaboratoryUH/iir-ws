@@ -8,6 +8,7 @@ import math
 import time
 
 import rclpy
+from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
 
@@ -55,53 +56,42 @@ def wait_for_task(navigator: BasicNavigator, label: str) -> bool:
     return False
 
 
+
+
 def execute_rectangle(navigator: BasicNavigator, args: argparse.Namespace) -> bool:
-    turn_sign = -1.0 if args.turn_dir == 'right' else 1.0
-    turn_amount = turn_sign * math.radians(args.turn_angle_deg)
-    segment_timeout_sec = max(1, math.ceil(args.segment_timeout))
-    turn_timeout_sec = max(1, math.ceil(args.turn_timeout))
+    def create_pose(x: float, y: float, yaw: float = 0.0) -> PoseStamped:
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.header.stamp = navigator.get_clock().now().to_msg()
+        pose.pose.position.x = float(x)
+        pose.pose.position.y = float(y)
+        pose.pose.orientation.z = math.sin(yaw / 2.0)
+        pose.pose.orientation.w = math.cos(yaw / 2.0)
+        return pose
+    waypoints = [
+        create_pose(0.0, 0.0, 0.0),
+        create_pose(0.10, 0.0, -math.pi/2),
+        create_pose(0.10, -0.13, -math.pi),
+        create_pose(0.0, -0.13, -math.pi/2),
+        create_pose(0.0, -0.26, 0.0),
+        create_pose(0.10, -0.26, -math.pi/2),
+        create_pose(0.10, -0.39, -math.pi),
+        create_pose(0.00, -0.39, -math.pi/2),
+    ]
+
+    # waypoints = [
+    #     create_pose(0.0, 0.0, 0.0),
+    #     create_pose(2.0, 0.0, -math.pi/2),
+    #     create_pose(2.0, -1.0, math.pi),
+    #     create_pose(0.0, -1.0, math.pi/2),
+    #     create_pose(0.0, 0.0, 0.0)
+    # ]
 
     for lap in range(args.repeats):
         print(f'Starting rectangle {lap + 1}/{args.repeats}')
 
-        # Side 1: long
-        navigator.driveOnHeading(args.long_side, args.speed, segment_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} side 1 ({args.long_side:.2f}m)'):
-            return False
-
-        navigator.spin(turn_amount, turn_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} turn 1'):
-            return False
-        time.sleep(args.settle_time)
-
-        # Side 2: short
-        navigator.driveOnHeading(args.short_side, args.speed, segment_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} side 2 ({args.short_side:.2f}m)'):
-            return False
-
-        navigator.spin(turn_amount, turn_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} turn 2'):
-            return False
-        time.sleep(args.settle_time)
-
-        # Side 3: long
-        navigator.driveOnHeading(args.long_side, args.speed, segment_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} side 3 ({args.long_side:.2f}m)'):
-            return False
-
-        navigator.spin(turn_amount, turn_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} turn 3'):
-            return False
-        time.sleep(args.settle_time)
-
-        # Side 4: short
-        navigator.driveOnHeading(args.short_side, args.speed, segment_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} side 4 ({args.short_side:.2f}m)'):
-            return False
-
-        # Final corner turn so next lap starts with same heading
-        navigator.spin(turn_amount, turn_timeout_sec)
-        if not wait_for_task(navigator, f'lap {lap + 1} turn 4'):
+        navigator.followWaypoints(waypoints)
+        if not wait_for_task(navigator, f'lap {lap + 1} waypoints'):
             return False
         time.sleep(args.settle_time)
 
