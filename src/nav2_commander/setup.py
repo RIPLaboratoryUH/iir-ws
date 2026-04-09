@@ -21,9 +21,10 @@ setup(
     entry_points={
         'console_scripts': [
             'lawn_mower = nav2_commander.lawn_mower:main',
+            'lawn_mower_heading = nav2_commander.lawn_mower_heading:main',
             'go_home = nav2_commander.go_home:main',
             'lawn_mower_path = nav2_commander.lawn_mower_path:main',
-            'rectangular_path = nav2_commander.rectangular_path:main',
+            'waypoint_path = nav2_commander.waypoint_path:main',
         ],
     },
 )

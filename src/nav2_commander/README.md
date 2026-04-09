@@ -1,75 +1,85 @@
 # nav2_commander
 
-A ROS 2 Python package providing autonomous navigation behaviors built on top of the [Nav2 Simple Commander API](https://navigation.ros.org/commander_api/index.html). Includes utilities for returning to a home position and executing lawn-mower coverage patterns. Nav2 must be running before executing any of these nodes.
+ROS 2 Python nodes built on top of the Nav2 Simple Commander API.
 
----
+This package currently focuses on:
+- single-goal navigation (`go_home`)
+- lawn-mower coverage with waypoint goals (`lawn_mower`)
+- lawn-mower coverage with motion primitives (`lawn_mower_heading`)
+- rectangular waypoint loop demo (`waypoint_path`)
+
+Nav2 must be running before these nodes are launched.
 
 ## Executables
 
-### `go_home`
-Navigates the robot to a target pose (default: origin). Accepts position and heading as CLI arguments.
+### go_home
+Send a single pose goal in `map` frame (defaults to origin).
 
 ```bash
 ros2 run nav2_commander go_home --x 0.0 --y 0.0 --yaw 0.0
 ```
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--x` | `0.0` | Target X position (meters) |
-| `--y` | `0.0` | Target Y position (meters) |
-| `--yaw` | `0.0` | Target heading (radians) |
+Arguments:
+- `--x` (default `0.0`): goal x in meters
+- `--y` (default `0.0`): goal y in meters
+- `--yaw` (default `0.0`): goal yaw in radians
 
-Prints distance remaining and ETA while navigating.
-
----
-
-### `lawn_mower`
-Executes a serpentine coverage pattern using `driveOnHeading` and `spin` primitives — no costmap planning between rows.
+### lawn_mower
+Serpentine coverage using sequential `goToPose` goals.
 
 ```bash
-ros2 run nav2_commander lawn_mower --rows 5 --length 2.0 --spacing 0.1 --speed 0.10
+ros2 run nav2_commander lawn_mower --rows 5 --length 3.0 --spacing 0.1
 ```
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--rows` | `5` | Number of passes |
-| `--length` | `2.0` | Length of each pass (meters) |
-| `--spacing` | `0.1` | Lateral distance between passes (meters) |
-| `--speed` | `0.10` | Drive speed (m/s) |
-| `--turn-angle-deg` | `90.0` | In-place turn angle (degrees) |
-| `--turn-bias-deg` | `0.0` | Bias to correct turn over/undershoot |
-| `--turn-dir` | `right` | Initial turn direction (`right` or `left`) |
-| `--segment-timeout` | `30.0` | Timeout per drive segment (seconds) |
-| `--turn-timeout` | `15.0` | Timeout per turn (seconds) |
-| `--settle-time` | `0.5` | Pause after each turn (seconds) |
+Arguments:
+- `--rows` (default `5`): number of rows
+- `--length` (default `3.0`): row length in meters
+- `--spacing` (default `0.1`): spacing between rows in meters
 
-**Pattern**: drive → turn 90° → shift by spacing → turn 90° → repeat (alternating turn directions).
+Pattern:
+- drive row and finish with corner heading
+- shift to next row and turn to row heading
+- alternate direction each row
 
----
-
-### `lawn_mower_path`
-Pre-computes all goal poses upfront and executes them in a single `goThroughPoses` call. More efficient than sequential `goToPose` calls but relies on the planner to navigate between waypoints.
+### lawn_mower_heading
+Serpentine coverage using `driveOnHeading` + `spin` primitives.
 
 ```bash
-ros2 run nav2_commander lawn_mower_path
+ros2 run nav2_commander lawn_mower_heading --rows 5 --length 3.0 --spacing 0.1 --speed 0.10
 ```
 
-Parameters are currently hardcoded (`num_rows=5`, `row_length=2.0m`, `row_spacing=0.1m`).
+Arguments:
+- `--rows` (default `5`): number of rows
+- `--length` (default `3.0`): row length in meters
+- `--spacing` (default `0.1`): spacing between rows in meters
+- `--speed` (default `0.10`): linear speed in m/s
+- `--turn-angle-deg` (default `90.0`): corner turn angle in degrees
+- `--turn-dir` (default `left`): initial turn direction (`left` or `right`)
+- `--segment-timeout` (default `30.0`): drive timeout in seconds
+- `--turn-timeout` (default `15.0`): spin timeout in seconds
+- `--settle-time` (default `0.20`): pause between segments in seconds
 
----
+### waypoint_path
+Runs a repeated rectangular waypoint path with `followWaypoints`.
 
-## Other Scripts
+```bash
+ros2 run nav2_commander waypoint_path --repeats 3 --long-side 2.0 --short-side 1.0
+```
 
-| File | Description |
-|------|-------------|
-| `commander.py` | Minimal demo/template showing basic Nav2 navigation with `goToPose`. |
-| `lawn_mower_old.py` | Earlier implementation using `goToPose` for each waypoint including turns. Superseded by `lawn_mower.py`. |
-
----
+Arguments:
+- `--repeats` (default `3`): number of rectangle laps
+- `--long-side` (default `2.0`): long side length in meters
+- `--short-side` (default `1.0`): short side length in meters
+- `--speed` (default `0.10`): drive speed in m/s
+- `--turn-angle-deg` (default `90.0`): corner turn angle in degrees
+- `--turn-dir` (default `right`): corner turn direction (`right` or `left`)
+- `--segment-timeout` (default `30.0`): drive timeout in seconds
+- `--turn-timeout` (default `15.0`): turn timeout in seconds
+- `--settle-time` (default `0.3`): pause after turns in seconds
 
 ## Dependencies
 
-- `nav2_simple_commander` — Nav2 Python commander API (`BasicNavigator`, `TaskResult`)
+- `nav2_simple_commander`
 - `rclpy`
 - `geometry_msgs`
 

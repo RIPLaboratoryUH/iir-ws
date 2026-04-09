@@ -1,159 +1,181 @@
 #! /usr/bin/env python3
-# Lawn mower pattern using deterministic behavior actions:
-# drive straight for row length, turn 90 deg in place, shift by spacing, turn 90 deg.
+# Lawn mower pattern navigation script
+# Drives in a back-and-forth pattern to cover an area
 
 import argparse
-import math
-import time
-
+from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 import rclpy
+import math
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description='Run a precise lawn-mower pattern with straight drives and 90-deg turns.'
+        description='Run a lawn mower coverage pattern with goToPose goals.'
     )
-    parser.add_argument('--rows', type=int, default=5, help='Number of long strips')
-    parser.add_argument('--length', type=float, default=2.0, help='Long strip length (m)')
-    parser.add_argument('--spacing', type=float, default=0.1, help='Strip spacing (m)')
-    parser.add_argument('--speed', type=float, default=0.10, help='Drive speed (m/s)')
+    parser.add_argument('--rows', type=int, default=5, help='Number of rows to mow')
     parser.add_argument(
-        '--turn-angle-deg',
+        '--length',
         type=float,
-        default=90.0,
-        help='In-place turn angle in degrees for each corner',
+        default=3.0,
+        help='Length of each row in meters',
     )
     parser.add_argument(
-        '--turn-bias-deg',
+        '--spacing',
         type=float,
-        default=0.0,
-        help='Bias added to each commanded turn angle to compensate for under/overshoot',
-    )
-    parser.add_argument(
-        '--turn-dir',
-        choices=['right', 'left'],
-        default='right',
-        help='Initial 90-deg turn direction after first long strip',
-    )
-    parser.add_argument(
-        '--segment-timeout',
-        type=float,
-        default=30.0,
-        help='Time allowance per drive segment in seconds',
-    )
-    parser.add_argument(
-        '--turn-timeout',
-        type=float,
-        default=15.0,
-        help='Time allowance per 90-deg turn in seconds',
-    )
-    parser.add_argument(
-        '--settle-time',
-        type=float,
-        default=0.5,
-        help='Pause after each turn to let the robot settle before the next segment',
+        default=0.1,
+        help='Spacing between rows in meters',
     )
     return parser.parse_args()
 
+def create_pose(navigator, x, y, yaw):
+    """
+    Create a PoseStamped message with the given position and orientation.
+    
+    Args:
+        navigator: BasicNavigator instance
+        x: X position in meters
+        y: Y position in meters
+        yaw: Orientation in radians
+    
+    Returns:
+        PoseStamped message
+    """
+    pose = PoseStamped()
+    pose.header.frame_id = 'map'
+    pose.header.stamp = navigator.get_clock().now().to_msg()
+    pose.pose.position.x = x
+    pose.pose.position.y = y
+    pose.pose.position.z = 0.0
+    
+    # Convert yaw to quaternion
+    pose.pose.orientation.z = math.sin(yaw / 2.0)
+    pose.pose.orientation.w = math.cos(yaw / 2.0)
+    
+    return pose
 
-def wait_for_task(navigator: BasicNavigator, label: str) -> bool:
+
+def execute_goal(navigator, goal_pose, goal_name):
+    """
+    Execute a navigation goal and wait for completion.
+    
+    Args:
+        navigator: BasicNavigator instance
+        goal_pose: PoseStamped goal
+        goal_name: String description of the goal
+    
+    Returns:
+        True if succeeded, False otherwise
+    """
+    print(f'Executing: {goal_name}')
+    navigator.goToPose(goal_pose)
+    
+    i = 0
     while not navigator.isTaskComplete():
-        time.sleep(0.05)
-
+        i += 1
+        feedback = navigator.getFeedback()
+        if feedback and i % 10 == 0:
+            print(f'  Distance remaining: {feedback.distance_remaining:.2f}m')
+    
     result = navigator.getResult()
     if result == TaskResult.SUCCEEDED:
-        print(f'{label}: succeeded')
+        print(f'  ✓ {goal_name} succeeded!')
         return True
-    if result == TaskResult.CANCELED:
-        print(f'{label}: canceled')
+    elif result == TaskResult.CANCELED:
+        print(f'  ✗ {goal_name} was canceled!')
         return False
-    if result == TaskResult.FAILED:
+    elif result == TaskResult.FAILED:
         error_code, error_msg = navigator.getTaskError()
-        print(f'{label}: failed ({error_code}: {error_msg})')
+        print(f'  ✗ {goal_name} failed! {error_code}: {error_msg}')
         return False
-
-    print(f'{label}: unknown status')
-    return False
-
-
-def execute_sequence(navigator: BasicNavigator, args: argparse.Namespace) -> bool:
-    base_sign = -1.0 if args.turn_dir == 'right' else 1.0
-    turn_angle_rad = math.radians(args.turn_angle_deg + args.turn_bias_deg)
-    segment_timeout_sec = max(1, math.ceil(args.segment_timeout))
-    turn_timeout_sec = max(1, math.ceil(args.turn_timeout))
-
-    for row in range(args.rows):
-        long_label = f'row {row + 1}/{args.rows} drive {args.length:.2f}m'
-        navigator.driveOnHeading(
-            dist=args.length,
-            speed=args.speed,
-            time_allowance=segment_timeout_sec,
-        )
-        if not wait_for_task(navigator, long_label):
-            return False
-
-        if row == args.rows - 1:
-            break
-
-        # Alternate left/right pairs every row to create serpentine motion.
-        turn_sign = base_sign if row % 2 == 0 else -base_sign
-        turn_amount = turn_sign * turn_angle_rad
-
-        navigator.spin(spin_dist=turn_amount, time_allowance=turn_timeout_sec)
-        if not wait_for_task(navigator, f'row {row + 1} first 90-deg turn'):
-            return False
-        time.sleep(args.settle_time)
-
-        navigator.driveOnHeading(
-            dist=args.spacing,
-            speed=args.speed,
-            time_allowance=segment_timeout_sec,
-        )
-        if not wait_for_task(navigator, f'row {row + 1} spacing shift {args.spacing:.2f}m'):
-            return False
-
-        navigator.spin(spin_dist=turn_amount, time_allowance=turn_timeout_sec)
-        if not wait_for_task(navigator, f'row {row + 1} second 90-deg turn'):
-            return False
-        time.sleep(args.settle_time)
-
-    return True
+    else:
+        print(f'  ✗ {goal_name} has an invalid return status!')
+        return False
 
 
 def main() -> None:
     args = parse_args()
+
     rclpy.init()
+
     navigator = BasicNavigator()
-
+    
+    # Wait for navigation to fully activate
     print('Waiting for Nav2 to activate...')
-    # Odometry-only setup: no AMCL lifecycle check.
-    time.sleep(3)
-    print('Starting lawn mower pattern...')
+    navigator.waitUntilNav2Active()
+    print('Nav2 is active!')
 
-    print(
-        f'Starting precise lawn_mower: rows={args.rows}, length={args.length:.2f}, '
-        f'spacing={args.spacing:.2f}, speed={args.speed:.2f}, '
-        f'turn_angle_deg={args.turn_angle_deg:.1f}, turn_bias_deg={args.turn_bias_deg:.1f}, '
-        f'settle_time={args.settle_time:.2f}, turn_dir={args.turn_dir}'
-    )
+    # Set initial pose
+    initial_pose = PoseStamped()
+    initial_pose.header.frame_id = 'map'
+    initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+    initial_pose.pose.position.x = 0.0
+    initial_pose.pose.position.y = 0.0
+    initial_pose.pose.orientation.z = 0.0
+    initial_pose.pose.orientation.w = 1.0
+    
+    navigator.setInitialPose(initial_pose)
+    print('Initial pose set at origin')
 
-    try:
-        ok = execute_sequence(navigator, args)
-        if ok:
-            print('Lawn mower mission succeeded.')
-        else:
-            print('Lawn mower mission failed.')
-    except KeyboardInterrupt:
-        print('Ctrl-C detected, canceling active task...')
-        try:
-            navigator.cancelTask()
-        except Exception as exc:
-            print(f'Cancel request failed: {exc}')
-        print('Stop requested; exiting.')
-    finally:
-        rclpy.shutdown()
+    # Lawn mower parameters
+    row_length = args.length
+    row_spacing = args.spacing
+    num_rows = args.rows
+    
+    print(f'\nStarting lawn mower pattern:')
+    print(f'  Row length: {row_length}m')
+    print(f'  Row spacing: {row_spacing}m')
+    print(f'  Number of rows: {num_rows}')
+    print()
 
+    # Starting position and orientation
+    current_x = 0.0
+    current_y = 0.0
+    current_yaw = 0.0  # Facing in +X direction (0 radians)
+    
+    # Direction toggle (1 for forward, -1 for backward along X)
+    direction = 1
+    
+    for row in range(num_rows):
+        print(f'\n=== Row {row + 1}/{num_rows} ===')
+        
+        # Plan the heading at the end of the row so drive + turn happen in one goal.
+        turn_sign = 1 if direction == 1 else -1
+        row_end_yaw = current_yaw
+        if row < num_rows - 1:
+            row_end_yaw += turn_sign * (math.pi / 2)
+
+        current_x += direction * row_length
+        goal_pose = create_pose(navigator, current_x, current_y, row_end_yaw)
+        if not execute_goal(navigator, goal_pose, f'Row {row + 1}: Drive {row_length}m + turn'):
+            print('Navigation failed, aborting lawn mower pattern')
+            break
+
+        current_yaw = row_end_yaw
+
+        # Don't do the shift on the last row.
+        if row < num_rows - 1:
+            # Shift by one row spacing and include the second 90-degree turn.
+            current_y += row_spacing
+            current_yaw += turn_sign * (math.pi / 2)
+            goal_pose = create_pose(navigator, current_x, current_y, current_yaw)
+
+            if not execute_goal(navigator, goal_pose, f'Shift {row_spacing}m to next row'):
+                print('Navigation failed, aborting lawn mower pattern')
+                break
+
+            # Toggle direction for next row (creates back-and-forth pattern)
+            direction *= -1
+    
+    print('\n' + '='*50)
+    print('Lawn mower pattern completed!')
+    print('='*50)
+    
+    # Optionally return to origin
+    # print('\nReturning to origin...')
+    # return_pose = create_pose(navigator, 0.0, 0.0, 0.0)
+    # execute_goal(navigator, return_pose, 'Return to origin')
+    
     exit(0)
 
 
