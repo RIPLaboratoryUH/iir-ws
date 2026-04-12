@@ -13,17 +13,17 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description='Run a lawn mower coverage pattern with goToPose goals.'
     )
-    parser.add_argument('--rows', type=int, default=5, help='Number of rows to mow')
+    parser.add_argument('--rows', type=int, default=10, help='Number of rows to mow')
     parser.add_argument(
         '--length',
         type=float,
-        default=3.0,
+        default=0.13,
         help='Length of each row in meters',
     )
     parser.add_argument(
         '--spacing',
         type=float,
-        default=0.1,
+        default=0.13,
         help='Spacing between rows in meters',
     )
     return parser.parse_args()
@@ -102,7 +102,7 @@ def main() -> None:
     
     # Wait for navigation to fully activate
     print('Waiting for Nav2 to activate...')
-    navigator.waitUntilNav2Active()
+    # navigator.waitUntilNav2Active()
     print('Nav2 is active!')
 
     # Set initial pose
@@ -140,7 +140,7 @@ def main() -> None:
         print(f'\n=== Row {row + 1}/{num_rows} ===')
         
         # Plan the heading at the end of the row so drive + turn happen in one goal.
-        turn_sign = 1 if direction == 1 else -1
+        turn_sign = -1 if direction == 1 else 1
         row_end_yaw = current_yaw
         if row < num_rows - 1:
             row_end_yaw += turn_sign * (math.pi / 2)
@@ -156,7 +156,7 @@ def main() -> None:
         # Don't do the shift on the last row.
         if row < num_rows - 1:
             # Shift by one row spacing and include the second 90-degree turn.
-            current_y += row_spacing
+            current_y -= row_spacing
             current_yaw += turn_sign * (math.pi / 2)
             goal_pose = create_pose(navigator, current_x, current_y, current_yaw)
 

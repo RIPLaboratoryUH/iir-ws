@@ -12,12 +12,13 @@
 
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, RegisterEventHandler
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -46,23 +47,37 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_keyboard_twist",
-            default_value="false",
-            description="publish cmd_vel from keyboard"
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "use_joy_twist",
-            default_value="false",
-            description="publish cmd vel from joystick"
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "use_lidar",
-            default_value="true",
+            default_value="false",
             description="activates URG node from lidar_launch, adds lidar to URDF"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_display_reader",
+            default_value="true",
+            description="activates display_reader node for number recognition"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "display_reader_exposure",
+            default_value="-3.0",
+            description="camera exposure for display reader (-1 = auto)"
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_arducam_tof",
+            default_value="false",
+            description="activates Arducam TOF camera pointcloud node"
+        )
+    )
+    declared_arguments.append( #run on groundstation but not on robot
+        DeclareLaunchArgument(
+            "use_display_marker",
+            default_value="false",
+            description="activates display_marker node for visualizing readings on map"
         )
     )
     
@@ -70,10 +85,8 @@ def generate_launch_description():
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_sim_time = LaunchConfiguration("use_sim_time")
-    use_keyboard_twist = LaunchConfiguration("use_keyboard_twist")
-    use_joy_twist = LaunchConfiguration("use_joy_twist")
-
-    # joy = LaunchConfiguration
+    
+    
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -87,7 +100,7 @@ def generate_launch_description():
             use_mock_hardware,
         ]
     )
-    robot_description = {"robot_description": robot_description_content}
+    robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
 
     robot_controllers = PathJoinSubstitution(
         [
@@ -121,8 +134,8 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
 
-        parameters=[{'robot_description': robot_description}, robot_controllers,{'use_sim_time': use_sim_time}],
-        condition=(IfCondition(use_mock_hardware))
+        parameters=[robot_description, robot_controllers,{'use_sim_time': use_sim_time}],
+        condition=UnlessCondition(use_mock_hardware)
             
 
     )
@@ -135,15 +148,7 @@ def generate_launch_description():
             ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
         ],
     )
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config_file],
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=IfCondition(gui),
-    )
+
     joint_state_publisher = Node(
     package="joint_state_publisher",
     executable="joint_state_publisher",
@@ -166,25 +171,6 @@ def generate_launch_description():
 
     )
 
-    joystick_node = Node(
-        #ros2 run teleop_twist_joy teleop_node --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
-
-        package='teleop_twist_joy',
-        executable='teleop_node',
-        arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
-        condition=IfCondition(use_joy_twist)
-    )
-    keyboard_node = Node(
-        #ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=diff_drive_controller/cmd_vel -p stamped:=true
-
-    package='teleop_twist_keyboard',
-    executable='teleop_twist_keyboard',
-    arguments=['--remap', 'cmd_vel:=cmd_vel_user'],
-    condition=IfCondition(use_keyboard_twist),
-    output='screen'
-)
-
-
     static_transform_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -193,27 +179,12 @@ def generate_launch_description():
         output='screen'
 
     )
-    odom_to_tf = Node(
-        package="odom_to_tf_ros2",
-        executable="odom_to_tf",
-        arguments=['--ros-args', '-p' ,'odom_topic:=diff_drive_controller/odom']
-    )
-    my_tf_publisher = Node(
-        package="iir_base",
-        executable="tf2_publish.py"
-    )
     micro_ros_node = Node(
         package='micro_ros_agent',
         executable='micro_ros_agent',
         arguments=['serial', '--dev', '/dev/ttyACM0'],
         output='screen'
     )
-    bridge = Node(
-            package='ros_gz_bridge',
-            executable='parameter_bridge',
-            parameters=[{'config_file': bridge_params},{'use_sim_time': use_sim_time}],
-            output='screen'
-        )
     robot_localization_node = Node(
        package='robot_localization',
        executable='ekf_node',
@@ -221,23 +192,6 @@ def generate_launch_description():
        output='screen',
        parameters=[ekf_params, {'use_sim_time' : use_sim_time}]
        )
-    wheelmuxer = Node(
-        package='wheelmuxer',
-        executable='talker',
-        output='screen'
-    )
-
-    picolistener16 = Node(
-        package='picolistener',
-        executable='listener16',
-        output='screen'
-    )
-    picolistener19 = Node(
-                package='picolistener',
-        executable='listener19',
-        output='screen'
-    )
-
     lidar = Node(
             package="urg_node",
             executable="urg_node_driver",
@@ -246,37 +200,60 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("use_lidar"))
     )
 
-    # Delay start of joint_state_broadcaster after `robot_controller`
-    # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
-    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=robot_controller_spawner,
-            on_exit=[joint_state_broadcaster_spawner],
-        )
+    display_reader = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("display_reader"),
+                "launch",
+                "display_reader.launch.py"
+            ])
+        ),
+        launch_arguments={
+            'exposure': LaunchConfiguration('display_reader_exposure')
+        }.items(),
+        condition=IfCondition(LaunchConfiguration("use_display_reader"))
+    )
+
+    arducam_tof = Node(
+        package="arducam_rclpy_tof_pointcloud",
+        executable="tof_pointcloud",
+        name="arducam_tof_pointcloud",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("use_arducam_tof"))
+    )
+
+    display_marker = Node(
+        package="display_marker",
+        executable="display_marker_node",
+        name="display_marker_node",
+        output="screen",
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=IfCondition(LaunchConfiguration("use_display_marker"))
+    )
+
+    #ros2 run pointcloud_to_laserscan pointcloud_to_laserscan_node --ros-args -p min_height:=0.0 -p max_height:=5.0  -r  cloud_in:=/point_cloud
+    
+    pointcloud_to_laserscan = Node(
+        package="pointcloud_to_laserscan",
+        executable="pointcloud_to_laserscan_node",
+        name="pointcloud_to_laserscan_node",
+        output="screen",
+        parameters=[{'min_height': 0.0}, {'max_height': 1.0}],
+        remappings=[('cloud_in', '/point_cloud')]
     )
 
     nodes = [
-        # static_transform_publisher,
-    #    robot_localization_node,
-        control_node, #make it so this is on when using 'mock hardware' and not on when using gz
+        static_transform_publisher,
+        control_node,
         robot_state_pub_node,
-
-       # wheelmuxer,
-        picolistener16,
-        picolistener19,
-#         odom_to_tf,
-        lidar,
-        # micro_ros_node,
-        # twist_stamper,
-        # joystick_node,
-        # keyboard_node,
-        # bridge,
+        robot_localization_node,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
-        #rviz_node,
         joint_state_publisher,
-        # my_tf_publisher,
-        
+        display_reader,
+        arducam_tof,
+        display_marker,
+        # pointcloud_to_laserscan
     ]
 
     return LaunchDescription(declared_arguments + nodes)
