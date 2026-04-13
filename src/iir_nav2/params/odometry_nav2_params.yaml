@@ -11,7 +11,7 @@ bt_navigator:
     filter_duration: 0.3
     default_server_timeout: 20
     wait_for_service_timeout: 1000
-    goal_reached_tol: 0.005 # changed from 0.25 to 0.005 for parity with xy goal tolerance
+    goal_reached_tol: 0.01 # changed from 0.25 to 0.005 for parity with xy goal tolerance
     introspection_mode: "disabled"
     navigators: ["navigate_to_pose", "navigate_through_poses"]
     navigate_to_pose:
@@ -266,7 +266,7 @@ velocity_smoother:
     max_velocity: [0.5, 0.0, 0.3]
     min_velocity: [-0.5, 0.0, -0.3]
     max_accel: [1.0, 0.0, 0.4]
-    max_decel: [-1.0, 0.0, -0.8]
+    max_decel: [-2.5, 0.0, -12.2]
     odom_topic: "/odometry/filtered"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]

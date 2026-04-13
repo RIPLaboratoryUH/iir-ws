@@ -93,13 +93,12 @@ class DisplayMarkerNode(Node):
         if math.isnan(msg.data):
             return
 
-        # Lookup transform at message timestamp
+        # Lookup latest available transform (avoids single-threaded executor deadlocks / future extrapolation)
         try:
             transform = self.tf_buffer.lookup_transform(
                 self.map_frame,
                 self.robot_frame,
-                msg.header.stamp,
-                timeout=Duration(seconds=self.tf_timeout)
+                Time()
             )
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException,
                 tf2_ros.ExtrapolationException) as e:
