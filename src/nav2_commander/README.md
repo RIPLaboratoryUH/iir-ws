@@ -50,14 +50,14 @@ ros2 run nav2_commander lawn_mower_heading --rows 5 --length 3.0 --spacing 0.1 -
 
 Arguments:
 - `--rows` (default `5`): number of rows
-- `--length` (default `3.0`): row length in meters
-- `--spacing` (default `0.1`): spacing between rows in meters
+- `--length` (default `0.13`): row length in meters
+- `--spacing` (default `0.13`): spacing between rows in meters
 - `--speed` (default `0.10`): linear speed in m/s
 - `--turn-angle-deg` (default `90.0`): corner turn angle in degrees
-- `--turn-dir` (default `left`): initial turn direction (`left` or `right`)
-- `--segment-timeout` (default `30.0`): drive timeout in seconds
-- `--turn-timeout` (default `15.0`): spin timeout in seconds
-- `--settle-time` (default `0.20`): pause between segments in seconds
+- `--turn-dir` (default `right`): initial turn direction (`left` or `right`)
+- `--segment-timeout` (default `30`): drive timeout in seconds, must be INT
+- `--turn-timeout` (default `15`): spin timeout in seconds, must be INT
+- `--settle-time` (default `1`): pause between segments in seconds, must be INT
 
 ### waypoint_path
 Runs a repeated rectangular waypoint path with `followWaypoints`.
