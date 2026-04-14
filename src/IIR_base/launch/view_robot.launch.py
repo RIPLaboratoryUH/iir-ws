@@ -61,11 +61,19 @@ def generate_launch_description():
         have to be updated.",
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "is_on_wall",
+            default_value="false",
+            description="sets the is_on_wall argument for the URDF, which changes the location of the IMU"
+        )
+    )
 
     # Initialize Arguments
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     gui = LaunchConfiguration("gui")
+    is_on_wall = LaunchConfiguration("is_on_wall")
     prefix = LaunchConfiguration("prefix")
 
     # Get URDF via xacro
@@ -79,6 +87,9 @@ def generate_launch_description():
             " ",
             "prefix:=",
             prefix,
+                " ",
+            "is_on_wall:=",
+            is_on_wall,
         ]
     )
     robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}

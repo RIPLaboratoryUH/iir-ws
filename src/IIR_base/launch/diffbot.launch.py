@@ -80,12 +80,19 @@ def generate_launch_description():
             description="activates display_marker node for visualizing readings on map"
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "is_on_wall",
+            default_value="false",
+            description="sets the is_on_wall argument for the URDF, which changes the location of the IMU"
+        )
+    )
     
     # Initialize Arguments
     gui = LaunchConfiguration("gui")
     use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     use_sim_time = LaunchConfiguration("use_sim_time")
-    
+    is_on_wall = LaunchConfiguration("is_on_wall")
     
     # Get URDF via xacro
     robot_description_content = Command(
@@ -98,6 +105,9 @@ def generate_launch_description():
             " ",
             "use_mock_hardware:=",
             use_mock_hardware,
+            " ",
+            "is_on_wall:=",
+            is_on_wall,
         ]
     )
     robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
