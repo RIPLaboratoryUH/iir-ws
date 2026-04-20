@@ -70,6 +70,11 @@ def generate_launch_description():
         description='Full path to the robot urdf/sdf file'
     )
 
+    robot_description_with_mock_hardware = Command([
+        'xacro', ' ', robot_sdf,
+        ' ', 'mock_hardware:=true',
+    ])
+
     start_robot_state_publisher_cmd = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -78,7 +83,7 @@ def generate_launch_description():
         parameters=[
             {
                 'use_sim_time': use_sim_time,
-                'robot_description': ParameterValue(Command(['xacro', ' ', robot_sdf]), value_type=str)
+                'robot_description': ParameterValue(robot_description_with_mock_hardware, value_type=str)
             }
         ]
     )
@@ -92,14 +97,51 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
     )
 
-    # gazebo_client = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(get_package_share_directory('ros_gz_sim'),
-    #                      'launch',
-    #                      'gz_sim.launch.py')
-    #     ),
-    #     launch_arguments={'gz_args': ['-v4 -g ']}.items()
-    # )
+    gazebo_server = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ros_gz_sim'),
+                         'launch',
+                         'gz_sim.launch.py')
+            ),
+        launch_arguments={'gz_args': '-r -s'}.items()
+    )
+
+    gazebo_client = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ros_gz_sim'),
+                         'launch',
+                         'gz_sim.launch.py')
+        ),
+        launch_arguments={'gz_args': ['-v4 -g ']}.items()
+    )
+
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='bridge_ros_gz',
+        parameters=[
+            {
+                'config_file': os.path.join(
+                    desc_dir, 'config', 'gz_ros_bridge.yaml'
+                ),
+                'use_sim_time': use_sim_time,
+            }
+        ],
+        output='screen',
+    )
+
+    gz_robot = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=[
+            '-name', 'iir',
+            '-topic', 'robot_description',
+            '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
+            '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']],
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+
 
     # gz_robot = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
@@ -115,9 +157,15 @@ def generate_launch_description():
 
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_robot_sdf_cmd)
-    
+
+    ld.add_action(bridge)
+    ld.add_action(gz_robot)
+
+    ld.add_action(gazebo_server)
+    ld.add_action(gazebo_client)
 
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(rviz_cmd)
+
 
     return ld
