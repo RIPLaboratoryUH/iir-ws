@@ -35,8 +35,10 @@ def generate_launch_description():
 
     # Launch Config for SIM
 
-    rviz_config_file = LaunchConfiguration('use_sim_time')
+    rviz_config_file = LaunchConfiguration('rviz_config_file')
     robot_sdf = LaunchConfiguration('robot_sdf')
+    # nav2_params_file = LaunchConfiguration('nav2_params_file')
+
     pose = {
         'x': LaunchConfiguration('x_pose', default='-8.00'),
         'y': LaunchConfiguration('y_pose', default='0.00'),
@@ -45,7 +47,7 @@ def generate_launch_description():
         'P': LaunchConfiguration('pitch', default='0.00'),
         'Y': LaunchConfiguration('yaw', default='0.00')
     }
-
+    
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
         default_value='True',
@@ -54,9 +56,15 @@ def generate_launch_description():
 
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config_file',
-        default_value=os.path.join(desc_dir, 'config', 'nav2_default_view.rviz'),
+        default_value='/home/riplab/GIT/iir-ws/src/IIR_base/config/nav2_default_view.rviz',
+        # default_value=os.path.join('IIR_base', 'config', 'nav2_default_view.rviz'),
         description='Full path to the RVIZ2 config'
     )
+
+    # declare_nav2_params_file_cmd = DeclareLaunchArgument(
+    #     'nav2_config_file',
+    #     default_value=os.path.join(desc_dir, 'config', )
+    # )
 
     declare_use_robot_state_pub_cmd = DeclareLaunchArgument(
         'use_robot_state_pub',
@@ -66,7 +74,8 @@ def generate_launch_description():
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(desc_dir, 'urdf', 'iirbot.urdf.xacro'),
+        default_value='/home/riplab/GIT/iir-ws/src/IIR_base/urdf/iirbot.urdf.xacro',
+        # default_value=os.path.join(desc_dir, 'urdf', 'iirbot.urdf.xacro'),
         description='Full path to the robot urdf/sdf file'
     )
 
@@ -96,6 +105,8 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
         parameters=[{'use_sim_time': use_sim_time}],
     )
+
+    
 
     gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
