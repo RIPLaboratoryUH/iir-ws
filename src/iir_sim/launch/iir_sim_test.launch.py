@@ -97,6 +97,18 @@ def generate_launch_description():
         ]
     )
 
+    # start_control_node_cmd = Node(
+    #     package='controller_manager',
+    #     executable='ros2_control_node',
+    #     parameters=[
+    #         {
+    #             'use_sim_time': use_sim_time,
+    #             'robot_description': ParameterValue(robot_description_with_mock_hardware, value_type=str)
+    #             'robot_controllers '
+    #         }
+    #     ]
+    # )
+
     rviz_cmd = Node(
         package='rviz2',
         executable='rviz2',
