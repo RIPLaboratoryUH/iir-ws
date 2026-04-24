@@ -1,6 +1,7 @@
 import os
 
 from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 
 from launch import LaunchDescription
 from launch.actions import (
@@ -56,39 +57,59 @@ def generate_launch_description():
 
     # Get URDF via xacro w/ mock hardware
 
-    robot_description = Command([
-        'xacro ', robot_sdf,
-        ' mock_hardware:=true',
-    ])
+    # Get URDF via xacro
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare("iir_base"), "urdf", "iirbot.urdf.xacro"]
+            ),
+            " ",
+            "use_mock_hardware:=",
+            'True',
+        ]
+    )
+    robot_description = {"robot_description": ParameterValue(robot_description_content, value_type=str)}
 
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description, robot_controllers,{'use_sim_time': True}],
+    )
 
-    start_controller_manager_cmd = Node(
+    robot_state_pub_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[robot_description,{'use_sim_time': True}],
+        remappings=[
+            ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
+        ],
+    )
+
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        parameters=[{'use_sim_time': True}],
+    )
+
+    timeout = 10
+    joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='ros2_control_node',
-        output='screen',
-        parameters=[
-            {
-                'use_sim_time': True,
-                'robot_description': ParameterValue(robot_description, value_type=str),
-            },
-            robot_controllers
-        ]
+        executable='spawner',
+        arguments=["joint_broad"],
+        parameters=[{'controller_manager_timeout': timeout}],
+    )
+
+    robot_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['diff_drive_controller', '--param-file', robot_controllers],
+        parameters=[{'controller_manager_timeout': timeout}],
     )
 
 
-
-    start_robot_state_publisher_cmd = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='screen',
-        parameters=[
-            {
-                'use_sim_time': True,
-                'robot_description': ParameterValue(robot_description, value_type=str)
-            }
-        ]
-    )
 
     rviz_cmd = Node(
             package='rviz2',
@@ -104,8 +125,11 @@ def generate_launch_description():
     ld.add_action(declare_nav2_config_file_cmd)
     ld.add_action(declare_robot_sdf_cmd)
 
-    ld.add_action(start_robot_state_publisher_cmd)
-    ld.add_action(start_controller_manager_cmd)
+    ld.add_action(robot_state_pub_node)
+    ld.add_action(control_node)
+    ld.add_action(robot_controller_spawner)
+    ld.add_action(joint_state_broadcaster_spawner)
+    ld.add_action(joint_state_publisher)
     ld.add_action(rviz_cmd)
 
     return ld
