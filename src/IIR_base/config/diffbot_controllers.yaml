@@ -24,7 +24,7 @@ diff_drive_controller:
 
     wheel_separation: .37
 
-    wheel_radius: 0.0825
+    wheel_radius: 0.0855 # add 3mm to account for added tire
     # wheel_radius: 0.0635
     # wheel_radius: 0.70555555555 #0.0635*11.1111111111
     use_stamped_vel: false
@@ -34,8 +34,8 @@ diff_drive_controller:
     # wheels_per_side: x
     # wheel_separation_multiplier: x
     # left_wheel_radius_multiplier: x
-    right_wheel_radius_multiplier: 0.988 #new value found by testing on 3/27/26
-
+    # right_wheel_radius_multiplier: 0.988 #new value found by testing on 3/27/26
+    #undo multiplier as new tire means this is out of date.
     # odom_frame_id: x
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]

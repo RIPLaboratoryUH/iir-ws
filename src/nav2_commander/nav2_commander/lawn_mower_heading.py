@@ -48,13 +48,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         '--segment-timeout',
         type=int,
-        default=30,
+        default=145,
         help='Timeout for each drive segment in seconds',
     )
     parser.add_argument(
         '--turn-timeout',
         type=int,
-        default=15,
+        default=145,
         help='Timeout for each turn in seconds',
     )
     parser.add_argument(
