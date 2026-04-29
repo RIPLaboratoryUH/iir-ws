@@ -40,8 +40,8 @@ ekf_filter_node:
         odom0: /diff_drive_controller/odom
         odom0_config: [false, false, false,
                false, false, false,
-               true,  true,  false,
-               false, false, true,   # vyaw from wheel odom
+               true,  false,  false,
+               false, false, false,   # vyaw from wheel odom
                false, false, false]
         odom0_queue_size: 10
         odom0_nodelay: true
