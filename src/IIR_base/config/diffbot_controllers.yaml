@@ -34,7 +34,7 @@ diff_drive_controller:
     # wheels_per_side: x
     # wheel_separation_multiplier: x
     # left_wheel_radius_multiplier: x
-    # right_wheel_radius_multiplier: 0.988 #new value found by testing on 3/27/26
+    right_wheel_radius_multiplier: 0.988 #new value found by testing on 3/27/26
     #undo multiplier as new tire means this is out of date.
     # odom_frame_id: x
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
