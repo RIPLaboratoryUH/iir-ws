@@ -113,7 +113,7 @@ def generate_launch_description():
     gazebo_client = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(
-                    get_package_share_directory('roz_gz_sim'),
+                    get_package_share_directory('ros_gz_sim'),
                     'launch',
                     'gz_sim.launch.py')
             ),
@@ -138,20 +138,28 @@ def generate_launch_description():
     )
 
     spawn_model_cmd = Node(
-            package='ros_gz_sim',
-            executable='create',
-            output='screen',
-            arugments=[
-                '-name', 'iir_robot',
-                '-topic', 'robot_description',
-                '-x', pose['x'],
-                '-y', pose['y'],
-                '-z', pose['z'],
-                '-R', pose['R'],
-                '-P', pose['P'],
-                '-Y', pose['Y'],
-            ],
-            parameters=[{'use_sim_time': True}]
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=[
+            '-name', 'iir_robot',
+            '-topic', 'robot_description',
+            '-x', pose['x'],
+            '-y', pose['y'],
+            '-z', pose['z'],
+            '-R', pose['R'],
+            '-P', pose['P'],
+            '-Y', pose['Y'],
+        ],
+        parameters=[{'use_sim_time': True}]
+    )
+
+
+    controller_manager = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[{'use_sim_time': True}],
+        output='screen',
     )
 
     timeout = 10
@@ -198,11 +206,26 @@ def generate_launch_description():
     ld.add_action(declare_nav2_config_file_cmd)
     ld.add_action(declare_robot_sdf_cmd)
 
-    # ld.add_action(robot_state_pub_node)
-    ld.add_action(control_node)
+    # ld.add_action(control_node)
+
+    ld.add_action(robot_state_pub_node)
+    # ld.add_action(controller_manager)
+    # Gazebo
+
+    ld.add_action(gazebo_server)
+    ld.add_action(gazebo_client)
+
+    ld.add_action(spawn_model_cmd)
+
+    ld.add_action(bridge_cmd)
+
     ld.add_action(robot_controller_spawner)
     ld.add_action(joint_state_broadcaster_spawner)
-    ld.add_action(joint_state_publisher)
+    
+    ld.add_action(robot_localization_cmd)
+    ld.add_action(static_transfrom_publisher)
+    
+    # ld.add_action(joint_state_publisher)
     ld.add_action(rviz_cmd)
 
     return ld
