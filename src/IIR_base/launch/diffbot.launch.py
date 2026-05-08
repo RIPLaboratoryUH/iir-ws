@@ -263,6 +263,7 @@ def generate_launch_description():
         display_reader,
         arducam_tof,
         display_marker,
+        lidar,
         # pointcloud_to_laserscan
     ]
 
