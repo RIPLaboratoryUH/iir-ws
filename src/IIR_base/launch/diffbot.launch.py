@@ -253,14 +253,14 @@ def generate_launch_description():
     )
 
     nodes = [
-        static_transform_publisher,
+        # static_transform_publisher,
         control_node,
         robot_state_pub_node,
         robot_localization_node,
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
         joint_state_publisher,
-        display_reader,
+        # display_reader,
         arducam_tof,
         display_marker,
         lidar,

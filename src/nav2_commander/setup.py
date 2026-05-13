@@ -25,6 +25,8 @@ setup(
             'go_home = nav2_commander.go_home:main',
             'lawn_mower_path = nav2_commander.lawn_mower_path:main',
             'waypoint_path = nav2_commander.waypoint_path:main',
+            'out_back = nav2_commander.out_back:main',
+            'spin = nav2_commander.spin:main'
         ],
     },
 )
