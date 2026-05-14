@@ -260,7 +260,7 @@ def generate_launch_description():
         robot_controller_spawner,
         joint_state_broadcaster_spawner,
         joint_state_publisher,
-        # display_reader,
+        display_reader,
         arducam_tof,
         display_marker,
         lidar,
