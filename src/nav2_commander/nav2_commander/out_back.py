@@ -136,7 +136,8 @@ def main() -> None:
         print('Navigation failed, aborting lawn mower pattern')
 
     current_x = 0.0
-    goal_pose = create_pose(navigator, current_x, current_y, 0)
+    #make sure we face -X
+    goal_pose = create_pose(navigator, current_x, current_y, math.pi)
     if not execute_goal(navigator, goal_pose, f'Drive Back'):
         print('Navigation failed, aborting lawn mower pattern')
         

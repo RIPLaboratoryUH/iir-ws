@@ -46,7 +46,7 @@ class DisplayMarkerNode(Node):
         super().__init__('display_marker_node')
 
         # Declare parameters
-        self.declare_parameter('map_frame', 'map')
+        self.declare_parameter('map_frame', 'odom')
         self.declare_parameter('robot_frame', 'base_link')
         self.declare_parameter('value_min', 0.0)
         self.declare_parameter('value_max', 10.0)

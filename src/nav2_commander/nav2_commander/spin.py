@@ -49,7 +49,7 @@ def main() -> None:
                 yaw = (2.0 * math.pi / segments) * j
                 
                 pose = PoseStamped()
-                pose.header.frame_id = 'map'
+                pose.header.frame_id = 'odom' #because of the changes made to nav2 params to use the odom frame as the global coordinate frame, we must also send commands to the odom frame
                 pose.header.stamp = navigator.get_clock().now().to_msg()
                 pose.pose.position.x = 0.0
                 pose.pose.position.y = 0.0
