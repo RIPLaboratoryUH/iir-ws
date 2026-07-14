@@ -186,6 +186,7 @@ class DalyBmsCanPublisher(Node):
         msg = String()
         msg.data = out
         self.pub.publish(msg)
+        # daly-bms-cli -d /dev/ttyUSB0 --soc --mqtt --mqtt-broker 192.168.1.123
 
 def main():
     rclpy.init()
