@@ -40,9 +40,9 @@ def initialize():
 
     return can_socket
 
-def build_request(data_id):
+def build_request(daly_id):
 
-    can_id = ( addr['priority'] << 24 ) | ( data_id[data_id] << 16 ) | ( addr['bms'] << 8 ) | ( addr['pc'] )
+    can_id = ( addr['priority'] << 24 ) | ( data_id[daly_id] << 16 ) | ( addr['bms'] << 8 ) | ( addr['pc'] )
     socketcan_id = can_id | CAN_EFF_FLAG
 
 
@@ -76,11 +76,11 @@ def receive_frame(socketcan):
     except socket.timeout:
         return None
 
-def validate_frame(frame, data_id):
+def validate_frame(frame, daly_id):
     
     can_id = frame & CAN_EFF_MASK
 
-    expected_id = ( addr['priority'] << 24 ) | ( data_id[data_id] << 16 ) | ( addr['pc'] << 8 ) | ( addr['bms'] )
+    expected_id = ( addr['priority'] << 24 ) | ( data_id[daly_id] << 16 ) | ( addr['pc'] << 8 ) | ( addr['bms'] )
 
     return can_id == expected_id
 
@@ -98,7 +98,7 @@ def main():
 
     try:
         while True:
-            send_request(socket_can, data_id['soc'])
+            send_request(socket_can, 'soc')
 
             deadline = time.monotonic() + 0.5
             response_received = False
@@ -106,20 +106,20 @@ def main():
             while time.monotonic() < deadline:
                 result = receive_frame(socket_can)
 
-                if result is None
+                if result is None:
                     break
 
                 can_id, payload = result
                 
-                if validate_frame(can_id, data_id['soc']):
-                    print(payload)
+                if validate_frame(can_id, 'soc'):
+                    print(decode_0x90(payload))
                     response_received = True
                     break
         
-        if no response_received:
-            print("No BMS response")
+            if not response_received:
+                print("No BMS response")
 
-        time.sleep(1)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print("\nStopping")
