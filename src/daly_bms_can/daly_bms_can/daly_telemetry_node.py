@@ -4,6 +4,7 @@ from sensor_msgs.msg import BatteryState
 
 import socket
 import struct
+import time
 
 CAN_FRAME_FORMAT = '=IB3x8s'
 CAN_FRAME_SIZE = struct.calcsize(CAN_FRAME_FORMAT)
@@ -21,10 +22,6 @@ DATA_IDS = {
     'min_max_voltage': 0x91,
     'min_max_temp': 0x92,
 }
-
-PRIORITY = 0x18
-BMS_ADDR = 0x01
-PC_ADDR  = 0x40
 
 class DalyBMSNode(Node):
 
@@ -93,7 +90,7 @@ class DalyBMSNode(Node):
     #def timer_callback(self):
 
     def build_request(self, data_name):
-        data_id = DALY_IDS[data_name]
+        data_id = DATA_IDS[data_name]
 
         can_id = ( ADDR['priority'] << 24 ) | ( data_id << 16 ) | ( ADDR['bms'] << 8) | ( ADDR['pc'] )
         socketcan_id = can_id | CAN_EFF_FLAG
@@ -115,7 +112,7 @@ class DalyBMSNode(Node):
         frame = self.build_request(data_name)
         self.can_socket.send(frame)
 
-    def receive_frame():
+    def receive_frame(self):
         try:
             raw_frame = self.can_socket.recv(CAN_FRAME_SIZE)
 
@@ -129,63 +126,67 @@ class DalyBMSNode(Node):
         except socket.timeout:
             return None
 
-    def validate_frame(frame, data_name):
-        data_id = DALY_IDS[data_name]
+    def validate_frame(self, frame, data_name):
+        data_id = DATA_IDS[data_name]
         can_id = frame & CAN_EFF_MASK
 
         expected_id = ( ADDR['priority'] << 24 ) | ( data_id <<  16 ) | ( ADDR['pc'] << 8 ) | ( ADDR['bms'] )
 
         return can_id == expected_id
 
-    def decode_0x90(payload):
-        voltage = int.from_bytes(payload[0:2], 'big') / 10
-        gather_voltage = int.from_bytes(payload[2:4], 'big') / 10
-        current = int.from_bytes(payload[4:6], 'big') - 30000
-        soc = int.from_bytes(payload[6:8], 'big') / 10
+    def decode_0x90(self, payload):
+        voltage = int.from_bytes(payload[0:2], 'big') / 10.0
+        gather_voltage = int.from_bytes(payload[2:4], 'big') / 10.0
+        current = int.from_bytes(payload[4:6], 'big') - 30000.0
+        soc = int.from_bytes(payload[6:8], 'big') / 10.0
 
-        return voltage, gather_voltage, current soc
+        return voltage, gather_voltage, current, soc
 
     def closeSocket(self):
-        socket.close()
+        self.can_socket.close()
 
     def timer_callback(self):
         msg = BatteryState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = 'base_link'
-        
-        try:
-            while True:
-                result = send_request(self, 'soc')
+        self.send_request('soc')
 
-                deadline = time.monotonic() + 0.5
-                response_received = False
+        deadline = time.monotonic() + 1.0
+        response_received = False
 
-                while time.monotonic() < deadline:
-                    result = receive_frame()
+        while time.monotonic() < deadline:
+            result = self.receive_frame()
 
-                    if result is None
-                        break
+            if result is None:
+                break
 
-                    can_id, payload = result
+            can_id, payload = result
 
-                    if validate_frame(can_id, 'soc'):
-                        voltage, gather_voltage, current, soc = decode(payload)
-                        response_received = True
-                        break
-            
-            if not response_received:
-                self.get_logger().info("No DALY BMS response")
+            if self.validate_frame(can_id, 'soc'):
+                voltage, gather_voltage, current, soc = self.decode_0x90(payload)
+                response_received = True
 
-    def main(arg=None):
-        rclpy.init(args=args)
+                msg.voltage = voltage
+                msg.current = float(current)
+                msg.percentage = soc / 100.0
 
-        daly_bms_node = DalyBMSNode()
+                self.publisher.publish(msg)
+                self.get_logger().info("Message published")
+                break
 
-        rclpy.spin(daly_bms_node)
+        if not response_received:
+            self.get_logger().info("No DALY BMS response")
 
-        daly_bms_node.destroy_node()
-        closeSocket()
-        rclpy.shutdown()
+def main(args=None):
+    rclpy.init(args=args)
 
-if __name__ == '__main__':
+    daly_bms_node = DalyBMSNode()
+
+    rclpy.spin(daly_bms_node)
+
+    daly_bms_node.destroy_node()
+    daly_bms_node.closeSocket()
+    rclpy.shutdown()
+
+if __name__ == "__main__":
     main()

@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'daly_bms_pub = daly_bms_can.daly_bms_pub:main',
+            'daly_test = daly_bms_can.daly_telemetry_node:main'
         ],
     },
 )
